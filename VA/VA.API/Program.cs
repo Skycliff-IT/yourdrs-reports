@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System;
 using VA.Shared.Behaviors;
 using VA.Shared.Exceptions.Handler;
 
@@ -43,11 +44,13 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddDebug();
 });
 
-builder.Services.AddDbContext<CustomerContext>(opts =>
-    {
-        opts.UseSqlite(builder.Configuration.GetConnectionString("Database"));
-    });
-
+//builder.Services.AddDbContext<CustomerContext>(opts =>
+//    {
+//        opts.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+//    });
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<CustomerContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 //builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped<IUserRepository, UserRepository>();
