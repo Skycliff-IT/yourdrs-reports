@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using System;
 using VA.Shared.Behaviors;
 using VA.Shared.Exceptions.Handler;
@@ -61,6 +62,15 @@ builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 
 var app = builder.Build();
+//app.UseMigration();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CustomerContext>();
+    db.Database.Migrate();
+}
+
+
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
@@ -68,19 +78,22 @@ var app = builder.Build();
 
 //}
 app.MapOpenApi();
-app.UseHttpsRedirection();
-
-app.UseMigration();
-app.UseCors("AllowAll");
-app.UseExceptionHandler(options => { });
-
-//app.UseExceptionHandler("/error");
+app.MapScalarApiReference();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vertical Slice Architecture API V1");
     c.RoutePrefix = string.Empty;
 });
+
+app.UseHttpsRedirection();
+
+
+app.UseCors("AllowAll");
+app.UseExceptionHandler(options => { });
+
+//app.UseExceptionHandler("/error");
+
 app.MapCarter();
 //app.MapGet("/", () => "Hello World!");
 
