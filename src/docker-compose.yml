@@ -1,3 +1,5 @@
+name: va-app
+
 services:
   mysql:
     image: mysql:latest
