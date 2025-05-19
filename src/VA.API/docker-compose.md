@@ -32,4 +32,5 @@ docker-compose run va.api bash
 docker-compose down --volumes --rmi all
 
 
-docker build -t your-app-image-name .
+cd.. (parent folder, where there is sln file contains)
+docker build -f VA.API/Dockerfile -t va-api .
