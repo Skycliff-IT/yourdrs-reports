@@ -1,4 +1,4 @@
-﻿namespace Catalog.API.Customers.GetCustomerById;
+﻿namespace VA.API.Customers.GetCustomerById;
 
 //public record GetCustomerByIdRequest();
 public record GetCustomerByIdResponse(Customer Customer);

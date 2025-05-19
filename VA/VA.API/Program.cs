@@ -1,41 +1,86 @@
+using Microsoft.EntityFrameworkCore;
+using VA.Shared.Behaviors;
+using VA.Shared.Exceptions.Handler;
+
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+var assembly = typeof(Program).Assembly;
+builder.Services.AddMediatR(config =>
+{
+    config.RegisterServicesFromAssembly(assembly);
+    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+    config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+});
+builder.Services.AddValidatorsFromAssembly(assembly);
+
+builder.Services.AddCarter();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Vertical Slice Architecture API", Version = "v1" });
+});
+builder.Services.AddLogging(loggingBuilder =>
+{
+    //loggingBuilder.AddSeq(builder.Configuration.GetSection("Seq"));
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+});
+
+builder.Services.AddDbContext<CustomerContext>(opts =>
+    {
+        opts.UseSqlite(builder.Configuration.GetConnectionString("Database"));
+    });
+
+
+//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+//builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+//if (app.Environment.IsDevelopment())
+//{
 
+//}
+app.MapOpenApi();
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseMigration();
+app.UseCors("AllowAll");
+app.UseExceptionHandler(options => { });
 
-app.MapGet("/weatherforecast", () =>
+//app.UseExceptionHandler("/error");
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vertical Slice Architecture API V1");
+    c.RoutePrefix = string.Empty;
+});
+app.MapCarter();
+//app.MapGet("/", () => "Hello World!");
+
 
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

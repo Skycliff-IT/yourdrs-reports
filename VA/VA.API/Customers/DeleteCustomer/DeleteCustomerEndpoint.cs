@@ -1,5 +1,5 @@
 ﻿
-namespace Catalog.API.Customers.DeleteCustomer;
+namespace VA.API.Customers.DeleteCustomer;
 
 //public record DeleteCustomerRequest(Guid Id);
 public record DeleteCustomerResponse(bool IsSuccess);

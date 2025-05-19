@@ -1,7 +1,4 @@
-﻿using VA.API.Models;
-using VA.Shared.CQRS;
-
-namespace Catalog.API.Customers.GetCustomers;
+﻿namespace VA.API.Customers.GetCustomers;
 
 public record GetCustomersQuery(int? PageNumber = 1, int? PageSize = 10) : IQuery<GetCustomersResult>;
 public record GetCustomersResult(IEnumerable<Customer> Customers);

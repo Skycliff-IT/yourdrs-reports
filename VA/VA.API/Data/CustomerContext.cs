@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
-using VA.API.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace VA.API.Data
 {

@@ -1,8 +1,4 @@
-﻿
-using VA.API.Models;
-using VA.Shared.CQRS;
-
-namespace Catalog.API.Customers.UpdateCustomer;
+﻿namespace VA.API.Customers.UpdateCustomer;
 
 public record UpdateCustomerCommand(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price)
     : ICommand<UpdateCustomerResult>;

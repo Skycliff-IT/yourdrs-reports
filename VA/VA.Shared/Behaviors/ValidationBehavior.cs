@@ -1,6 +1,6 @@
-﻿using VA.Shared.CQRS;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
+using VA.Shared.CQRS;
 
 namespace VA.Shared.Behaviors;
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse>

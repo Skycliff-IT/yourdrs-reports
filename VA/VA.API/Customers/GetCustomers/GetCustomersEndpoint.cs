@@ -1,7 +1,4 @@
-﻿using VA.API.Models;
-using VA.Shared.Pagination;
-
-namespace Catalog.API.Customers.GetCustomers;
+﻿namespace VA.API.Customers.GetCustomers;
 
 public record GetCustomersRequest(int? PageNumber = 1, int? PageSize = 10);
 public record GetCustomersResponse(IEnumerable<Customer> Customers);

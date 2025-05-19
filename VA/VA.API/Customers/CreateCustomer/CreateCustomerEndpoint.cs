@@ -1,4 +1,4 @@
-﻿namespace Catalog.API.Customers.CreateCustomer;
+﻿namespace VA.API.Customers.CreateCustomer;
 
 public record CreateCustomerRequest(string Name, List<string> Category, string Description, string ImageFile, decimal Price);
 

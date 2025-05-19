@@ -1,7 +1,4 @@
-﻿using VA.API.Models;
-using VA.Shared.CQRS;
-
-namespace Catalog.API.Customers.CreateCustomer;
+﻿namespace VA.API.Customers.CreateCustomer;
 
 public record CreateCustomerCommand(string Code, string Name)
     : ICommand<CreateCustomerResult>;
@@ -28,10 +25,10 @@ internal class CreateCustomerCommandHandler
         var Customer = new Customer
         {
             Id = Guid.NewGuid(),
-            CustomerCode= command.Code,
+            CustomerCode = command.Code,
             CustomerName = command.Name
         };
-        
+
         //save to database
         //session.Store(Customer);
         //await session.SaveChangesAsync(cancellationToken);

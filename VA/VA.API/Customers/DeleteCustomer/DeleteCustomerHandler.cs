@@ -1,8 +1,4 @@
-﻿
-using VA.API.Models;
-using VA.Shared.CQRS;
-
-namespace Catalog.API.Customers.DeleteCustomer;
+﻿namespace VA.API.Customers.DeleteCustomer;
 
 public record DeleteCustomerCommand(Guid Id) : ICommand<DeleteCustomerResult>;
 public record DeleteCustomerResult(bool IsSuccess);

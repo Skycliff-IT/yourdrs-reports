@@ -1,6 +1,6 @@
 ﻿
 
-namespace Catalog.API.Customers.GetCustomerById;
+namespace VA.API.Customers.GetCustomerById;
 
 public record GetCustomerByIdQuery(Guid Id) : IQuery<GetCustomerByIdResult>;
 public record GetCustomerByIdResult(Customer Customer);
