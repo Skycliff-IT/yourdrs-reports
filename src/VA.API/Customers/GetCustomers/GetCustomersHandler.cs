@@ -11,12 +11,8 @@ internal class GetCustomersQueryHandler
 {
     public async Task<GetCustomersResult> Handle(GetCustomersQuery query, CancellationToken cancellationToken)
     {
-        //var Customers = await session.Query<Customer>()
-        //    .ToPagedListAsync(query.PageNumber ?? 1, query.PageSize ?? 10, cancellationToken);
-
-        //return new GetCustomersResult(Customers);
+        //todo: implement pagination
         await context.Customers.ToListAsync(cancellationToken);
-
         return new GetCustomersResult(context.Customers);
     }
 }

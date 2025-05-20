@@ -1,4 +1,4 @@
-﻿
+﻿using VA.Shared.Exceptions;
 
 namespace VA.API.Customers.GetCustomerById;
 
@@ -6,18 +6,16 @@ public record GetCustomerByIdQuery(Guid Id) : IQuery<GetCustomerByIdResult>;
 public record GetCustomerByIdResult(Customer Customer);
 
 internal class GetCustomerByIdQueryHandler
+    (CustomerContext context)
     : IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdResult>
 {
-    public async Task<GetCustomerByIdResult> Handle(GetCustomerByIdQuery query, CancellationToken cancellationToken)
+    public Task<GetCustomerByIdResult> Handle(GetCustomerByIdQuery query, CancellationToken cancellationToken)
     {
-        //var Customer = await session.LoadAsync<Customer>(query.Id, cancellationToken);
-
-        //if (Customer is null)
-        //{
-        //    throw new CustomerNotFoundException(query.Id);
-        //}
-
-        //return new GetCustomerByIdResult(Customer);
-        return new GetCustomerByIdResult(null);
+        var customer = context.Customers.FirstOrDefault(x => x.Id == query.Id);
+        if (customer is null)
+        {
+            throw new NotFoundException(query.Id.ToString());
+        }
+        return Task.FromResult(new GetCustomerByIdResult(customer));
     }
 }

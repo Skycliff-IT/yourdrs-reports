@@ -1,4 +1,6 @@
-﻿namespace VA.API.Customers.DeleteCustomer;
+﻿using VA.Shared.Exceptions;
+
+namespace VA.API.Customers.DeleteCustomer;
 
 public record DeleteCustomerCommand(Guid Id) : ICommand<DeleteCustomerResult>;
 public record DeleteCustomerResult(bool IsSuccess);
@@ -11,13 +13,20 @@ public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCo
     }
 }
 
-internal class DeleteCustomerCommandHandler
+internal class DeleteCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<DeleteCustomerCommand, DeleteCustomerResult>
 {
     public async Task<DeleteCustomerResult> Handle(DeleteCustomerCommand command, CancellationToken cancellationToken)
     {
-        //session.Delete<Customer>(command.Id);
-        //await session.SaveChangesAsync(cancellationToken);
+        var customer = await context.Customers.FindAsync(new object[] { command.Id }, cancellationToken);
+
+        if (customer is null)
+        {
+            throw new NotFoundException(command.Id.ToString());
+        }
+
+        context.Customers.Remove(customer);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new DeleteCustomerResult(true);
     }

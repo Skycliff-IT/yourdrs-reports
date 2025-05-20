@@ -1,6 +1,7 @@
-﻿namespace VA.API.Customers.CreateCustomer;
+﻿
+namespace VA.API.Customers.CreateCustomer;
 
-public record CreateCustomerCommand(string Code, string Name)
+public record CreateCustomerCommand(string CustomerCode, string CustomerName)
     : ICommand<CreateCustomerResult>;
 public record CreateCustomerResult(Guid Id);
 
@@ -8,32 +9,36 @@ public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCo
 {
     public CreateCustomerCommandValidator()
     {
-        RuleFor(x => x.Code).NotEmpty().WithMessage("Code is required");
-        RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
+        RuleFor(x => x.CustomerCode)
+            .NotEmpty()
+            .WithMessage("Customer code is required.")
+            .Matches(@"^CUST-\d{3}$")
+            .WithMessage("Customer code must follow the format 'CUST-xxx', where 'xxx' are three digits (e.g., CUST-002).");
+
+        RuleFor(x => x.CustomerName)
+            .NotEmpty()
+            .WithMessage("Name is required")
+            .Length(2, 50).WithMessage("Name must be between 2 and 50 characters");
     }
 }
 
-internal class CreateCustomerCommandHandler
+internal class CreateCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<CreateCustomerCommand, CreateCustomerResult>
 {
     public async Task<CreateCustomerResult> Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
     {
-        //create Customer entity from command object
-        //save to database
-        //return CreateCustomerResult result               
-
-        var Customer = new Customer
+         
+        //todo: implement mapster
+        var customer = new Customer
         {
             Id = Guid.NewGuid(),
-            CustomerCode = command.Code,
-            CustomerName = command.Name
+            CustomerCode = command.CustomerCode,
+            CustomerName = command.CustomerName
         };
 
-        //save to database
-        //session.Store(Customer);
-        //await session.SaveChangesAsync(cancellationToken);
+        context.Customers.Add(customer);
+        await context.SaveChangesAsync(cancellationToken);
 
-        //return result
-        return new CreateCustomerResult(Customer.Id);
+        return new CreateCustomerResult(customer.Id);
     }
 }

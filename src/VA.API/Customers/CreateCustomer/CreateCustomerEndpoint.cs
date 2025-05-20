@@ -1,6 +1,6 @@
 ﻿namespace VA.API.Customers.CreateCustomer;
 
-public record CreateCustomerRequest(string Name, List<string> Category, string Description, string ImageFile, decimal Price);
+public record CreateCustomerRequest(string CustomerCode, string CustomerName);
 
 public record CreateCustomerResponse(Guid Id);
 

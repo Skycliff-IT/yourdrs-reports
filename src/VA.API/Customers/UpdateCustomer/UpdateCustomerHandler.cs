@@ -1,45 +1,49 @@
-﻿namespace VA.API.Customers.UpdateCustomer;
+﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using VA.Shared.Exceptions;
 
-public record UpdateCustomerCommand(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price)
+namespace VA.API.Customers.UpdateCustomer;
+
+public record UpdateCustomerCommand(Guid Id, string CustomerCode, string CustomerName)
     : ICommand<UpdateCustomerResult>;
-public record UpdateCustomerResult(bool IsSuccess);
-
+//public record UpdateCustomerResult(bool IsSuccess);
+public record UpdateCustomerResult(bool IsSuccess, string? ErrorMessage = null, Customer? UpdatedCustomer = null);
 public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerCommand>
 {
     public UpdateCustomerCommandValidator()
     {
         RuleFor(command => command.Id).NotEmpty().WithMessage("Customer ID is required");
 
-        RuleFor(command => command.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .Length(2, 150).WithMessage("Name must be between 2 and 150 characters");
+        RuleFor(x => x.CustomerCode)
+            .NotEmpty()
+            .WithMessage("Customer code is required.")
+            .Matches(@"^CUST-\d{3}$")
+            .WithMessage("Customer code must follow the format 'CUST-xxx', where 'xxx' are three digits (e.g., CUST-002).");
 
-        RuleFor(command => command.Price)
-            .GreaterThan(0).WithMessage("Price must be greater than 0");
+        RuleFor(x => x.CustomerName)
+            .NotEmpty()
+            .WithMessage("Name is required")
+            .Length(2, 50).WithMessage("Name must be between 2 and 50 characters");
     }
 }
 
-internal class UpdateCustomerCommandHandler
+internal class UpdateCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResult>
 {
     public async Task<UpdateCustomerResult> Handle(UpdateCustomerCommand command, CancellationToken cancellationToken)
     {
-        //var Customer = await session.LoadAsync<Customer>(command.Id, cancellationToken);
+        var customer = await context.Customers.FindAsync([command.Id], cancellationToken);
 
-        //if (Customer is null)
-        //{
-        //    throw new CustomerNotFoundException(command.Id);
-        //}
+        if (customer is null)
+        {
+            throw new NotFoundException(command.Id.ToString());
+        }
 
-        //Customer.Name = command.Name;
-        //Customer.Category = command.Category;
-        //Customer.Description = command.Description;
-        //Customer.ImageFile = command.ImageFile;
-        //Customer.Price = command.Price;
+        customer.CustomerCode = command.CustomerCode;
+        customer.CustomerName = command.CustomerName;
 
-        //session.Update(Customer);
-        //await session.SaveChangesAsync(cancellationToken);
+        context.Customers.Update(customer);
+        await context.SaveChangesAsync(cancellationToken);
 
-        return new UpdateCustomerResult(true);
+        return new UpdateCustomerResult(true, null, customer);
     }
 }
