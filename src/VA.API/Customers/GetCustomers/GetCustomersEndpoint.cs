@@ -1,18 +1,17 @@
-﻿namespace VA.API.Customers.GetCustomers;
+﻿using VA.Shared.Pagination;
 
-public record GetCustomersRequest(int? PageNumber = 1, int? PageSize = 10);
-public record GetCustomersResponse(IEnumerable<Customer> Customers);
-//public record GetCustomersResponse(PaginatedResult<GetCustomersRequest> Customers);
+namespace VA.API.Customers.GetCustomers;
+
+public record GetCustomersResponse(PaginatedResult<CustomerDto> Customers);
 
 public class GetCustomersEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/Customers", async ([AsParameters] GetCustomersRequest request, ISender sender) =>
+        app.MapGet("/Customers", async ([AsParameters] PaginationRequest request, ISender sender) =>
         {
-            var query = request.Adapt<GetCustomersQuery>();
-
-            var result = await sender.Send(query);
+            //var query = request.Adapt<GetCustomersQuery>();
+            var result = await sender.Send(new GetCustomersQuery(request));
 
             var response = result.Adapt<GetCustomersResponse>();
 
@@ -21,6 +20,7 @@ public class GetCustomersEndpoint : ICarterModule
         .WithName("GetCustomers")
         .Produces<GetCustomersResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status404NotFound)
         .WithSummary("Get Customers")
         .WithDescription("Get Customers");
     }

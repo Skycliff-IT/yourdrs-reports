@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using VA.Shared.Pagination;
 
 namespace VA.API.Customers.GetCustomers;
 
-public record GetCustomersQuery(int? PageNumber = 1, int? PageSize = 10) : IQuery<GetCustomersResult>;
-public record GetCustomersResult(IEnumerable<Customer> Customers);
+public record GetCustomersQuery(PaginationRequest PaginationRequest) : IQuery<GetCustomersResult>;
+public record GetCustomersResult(PaginatedResult<CustomerDto> Customers);
 
 internal class GetCustomersQueryHandler
 (CustomerContext context)
@@ -11,8 +12,26 @@ internal class GetCustomersQueryHandler
 {
     public async Task<GetCustomersResult> Handle(GetCustomersQuery query, CancellationToken cancellationToken)
     {
-        //todo: implement pagination
-        await context.Customers.ToListAsync(cancellationToken);
-        return new GetCustomersResult(context.Customers);
+
+        var pageIndex = query.PaginationRequest.PageIndex;
+        var pageSize = query.PaginationRequest.PageSize;
+        
+        var totalCount = await context.Customers.LongCountAsync(cancellationToken);
+
+        var customers = await context.Customers
+            .OrderBy(o => o.CustomerName)
+            .Skip(pageSize * pageIndex)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var customerDtos = customers.ToCustomerDtoList();
+
+
+        return new GetCustomersResult(
+            new PaginatedResult<CustomerDto>(
+                pageIndex,
+                pageSize,
+                totalCount,
+                customerDtos));
     }
 }
