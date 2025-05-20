@@ -8,11 +8,13 @@ public class GetCustomersEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/Customers", async ([AsParameters] GetCustomersRequest request, ISender sender) =>
+        app.MapGet("/Customers", async ([AsParameters] GetCustomersRequest request, 
+                ISender sender, 
+                CancellationToken cancellationToken) =>
         {
             var query = request.Adapt<GetCustomersQuery>();
 
-            var result = await sender.Send(query);
+            var result = await sender.Send(query, cancellationToken);
 
             var response = result.Adapt<GetCustomersResponse>();
 

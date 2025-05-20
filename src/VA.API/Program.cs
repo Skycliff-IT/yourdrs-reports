@@ -16,6 +16,9 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(ValidationBehavior<,>));
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
+
+//todo: 5:10
+
 builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddCarter();
