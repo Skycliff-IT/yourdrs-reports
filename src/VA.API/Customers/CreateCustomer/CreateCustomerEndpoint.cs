@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VA.Shared.Behaviors;
-
-namespace VA.API.Customers.CreateCustomer;
+﻿namespace VA.API.Customers.CreateCustomer;
 public class CreateCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

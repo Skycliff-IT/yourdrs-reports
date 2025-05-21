@@ -1,13 +1,4 @@
-﻿using VA.Shared.Exceptions;
-
-namespace VA.API.Customers.UpdateCustomer;
-
-
-//public record UpdateCustomerResult(bool IsSuccess);
-
-
-
-
+﻿namespace VA.API.Customers.UpdateCustomer;
 internal class UpdateCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>
 {

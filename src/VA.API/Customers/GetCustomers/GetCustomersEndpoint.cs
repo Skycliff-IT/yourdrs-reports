@@ -1,8 +1,4 @@
-﻿using VA.Shared.Pagination;
-
-namespace VA.API.Customers.GetCustomers;
-
-
+﻿namespace VA.API.Customers.GetCustomers;
 public class GetCustomersEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -17,7 +13,7 @@ public class GetCustomersEndpoint : ICarterModule
             return Results.Ok(response);
         })
         .WithName("GetCustomers")
-        .Produces<GetCustomersResponse>(StatusCodes.Status200OK)
+        .Produces<GetCustomersResponse>()
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesProblem(StatusCodes.Status404NotFound)
         .WithSummary("Get Customers")

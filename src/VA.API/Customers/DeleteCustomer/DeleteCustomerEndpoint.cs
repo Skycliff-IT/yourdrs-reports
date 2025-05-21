@@ -1,6 +1,4 @@
 ﻿namespace VA.API.Customers.DeleteCustomer;
-
-
 public class DeleteCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -15,7 +13,7 @@ public class DeleteCustomerEndpoint : ICarterModule
             return Results.Ok(response);
         })
         .WithName("DeleteCustomer")
-        .Produces<DeleteCustomerResponse>(StatusCodes.Status200OK)
+        .Produces<DeleteCustomerResponse>()
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesProblem(StatusCodes.Status404NotFound)
         .WithSummary("Delete Customer")

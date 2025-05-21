@@ -1,8 +1,4 @@
-﻿
-
-namespace VA.API.Customers.UpdateCustomer;
-
-
+﻿namespace VA.API.Customers.UpdateCustomer;
 public class UpdateCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -20,7 +16,7 @@ public class UpdateCustomerEndpoint : ICarterModule
                 return Results.Ok(response);
             })
             .WithName("UpdateCustomer")
-            .Produces<UpdateCustomerResponse>(StatusCodes.Status200OK)
+            .Produces<UpdateCustomerResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSummary("Update Customer")

@@ -1,5 +1,3 @@
-using VA.Shared.Pagination;
-
 namespace VA.API.Customers.GetCustomers;
 public class GetCustomersQuery(PaginationRequest request) : IQuery<GetCustomersResponse>
 {

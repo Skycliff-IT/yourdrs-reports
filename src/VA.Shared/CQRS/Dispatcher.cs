@@ -1,13 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using VA.Shared.CQRS;
+using VA.Shared.Behaviors;
 
-namespace VA.Shared.Behaviors;
+namespace VA.Shared.CQRS;
 
-public interface IDispatcher
-{
-    Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken = default)
-        where TRequest : ICommand<TResponse>;
-}
+
 
 public class Dispatcher : IDispatcher
 {

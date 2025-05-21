@@ -1,7 +1,12 @@
 global using Carter;
 global using FluentValidation;
 global using Mapster;
-//global using MediatR;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
 global using VA.API.Data;
 global using VA.API.Models;
+global using VA.Shared.Behaviors;
 global using VA.Shared.CQRS;
+global using VA.Shared.Exceptions;
+global using VA.Shared.Pagination;
+global using System.ComponentModel.DataAnnotations;

@@ -1,28 +1,15 @@
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-//using VA.API.Customers.UpdateCustomer;
-using VA.Shared.Behaviors;
 using VA.Shared.Exceptions.Handler;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-// Add services to the container.
 var assembly = typeof(Program).Assembly;
-//builder.Services.AddMediatR(config =>
-//{
-//    config.RegisterServicesFromAssembly(assembly);
-//    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-//    //config.AddOpenBehavior(typeof(LoggingBehavior<,>));
-//});
 
 //builder.Services.AddScoped<ICommandHandler<CreateCustomerCommand, CreateCustomerResponse>, CreateCustomerCommandHandler>();
 //builder.Services.AddScoped<ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>, UpdateCustomerCommandHandler>();
 //builder.Services.AddScoped<ICommandHandler<DeleteCustomerCommand, DeleteCustomerResponse>, DeleteCustomerCommandHandler>();
 
-
-
+//instead of above, adding Scrutor 
 builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
     .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
     .AsImplementedInterfaces()
@@ -35,17 +22,9 @@ builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
     .WithScopedLifetime());
 builder.Services.AddScoped<IDispatcher, Dispatcher>();
 
-//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandHandler<,>));
-//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandBaseHandler<>));
-
-//builder.Services.Decorate(typeof(IQueryHandler<,>), typeof(LoggingDecorator.QueryHandler<,>));
-//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
-//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandBaseHandler<>));
-
 builder.Services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
 
 builder.Services.AddCarter();
 
@@ -69,29 +48,17 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddLogging(loggingBuilder =>
 {
-    //loggingBuilder.AddSeq(builder.Configuration.GetSection("Seq"));
     loggingBuilder.AddConsole();
     loggingBuilder.AddDebug();
 });
 
-//builder.Services.AddDbContext<CustomerContext>(opts =>
-//    {
-//        opts.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-//    });
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CustomerContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-//builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-//builder.Services.AddScoped<IUserRepository, UserRepository>();
-
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
-
-
-
 var app = builder.Build();
-//app.UseMigration();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -99,13 +66,6 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-
-
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-
-//}
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseSwagger();
@@ -117,14 +77,9 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-
 app.UseCors("AllowAll");
 app.UseExceptionHandler(options => { });
 
-//app.UseExceptionHandler("/error");
-
 app.MapCarter();
-//app.MapGet("/", () => "Hello World!");
-
 
 app.Run();

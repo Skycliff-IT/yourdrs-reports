@@ -1,7 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace VA.API.Data;
-
 public class CustomerContext(DbContextOptions<CustomerContext> options) : DbContext(options)
 {
     public DbSet<Customer> Customers { get; set; } = default!;

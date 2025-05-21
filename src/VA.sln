@@ -4,7 +4,7 @@ VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VA.API", "VA.API\VA.API.csproj", "{A754214A-6109-422C-837A-630E032616CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VA.Shared", "VA.Shared\VA.Shared.csproj", "{E69A7AEC-52DB-45F9-8077-FE77915744E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VA.CrossingCutting", "VA.Shared\VA.CrossingCutting.csproj", "{E69A7AEC-52DB-45F9-8077-FE77915744E1}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject

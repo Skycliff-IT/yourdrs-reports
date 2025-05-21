@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VA.Shared\VA.Shared.csproj" />
+    <ProjectReference Include="..\VA.Shared\VA.CrossingCutting.csproj" />
   </ItemGroup>
 
 </Project>

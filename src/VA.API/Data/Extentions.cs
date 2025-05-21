@@ -1,7 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace VA.API.Data;
-
 public static class Extentions
 {
     public static IApplicationBuilder UseMigration(this IApplicationBuilder app)

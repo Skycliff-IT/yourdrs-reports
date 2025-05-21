@@ -1,5 +1,4 @@
 ﻿namespace VA.API.Models;
-
 public static class CustomerExtensions
 {
     public static IEnumerable<CustomerDto> ToCustomerDtoList(this IEnumerable<Customer> customers)
@@ -11,6 +10,4 @@ public static class CustomerExtensions
             CustomerName = customer.CustomerName
         });
     }
-
 }
-

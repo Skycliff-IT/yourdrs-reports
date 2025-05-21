@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using VA.Shared.Pagination;
-
-namespace VA.API.Customers.GetCustomers;
-
+﻿namespace VA.API.Customers.GetCustomers;
 internal class GetCustomersQueryHandler
 (CustomerContext context)
     : IQueryHandler<GetCustomersQuery, GetCustomersResponse>

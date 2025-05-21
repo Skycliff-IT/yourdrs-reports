@@ -1,5 +1,4 @@
 namespace VA.API.Customers.UpdateCustomer;
-
 public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerCommand>
 {
     public UpdateCustomerCommandValidator()

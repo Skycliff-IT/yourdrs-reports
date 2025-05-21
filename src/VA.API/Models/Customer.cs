@@ -1,7 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace VA.API.Models;
-
 public class Customer
 {
 
