@@ -3,8 +3,6 @@ using VA.Shared.Behaviors;
 
 namespace VA.Shared.CQRS;
 
-
-
 public class Dispatcher : IDispatcher
 {
     private readonly IServiceProvider _serviceProvider;
