@@ -1,7 +1,6 @@
 ﻿using VA.Shared.Exceptions;
 
 namespace VA.API.Customers.GetCustomerById;
-
 internal class GetCustomerByIdQueryHandler
     (CustomerContext context)
     : IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdResponse>

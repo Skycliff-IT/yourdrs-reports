@@ -1,5 +1,4 @@
 namespace VA.API.Customers.DeleteCustomer;
-
 public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCommand>
 {
     public DeleteCustomerCommandValidator()

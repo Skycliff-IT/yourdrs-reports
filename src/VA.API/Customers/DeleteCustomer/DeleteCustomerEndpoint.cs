@@ -1,8 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using VA.API.Customers.CreateCustomer;
-
-namespace VA.API.Customers.DeleteCustomer;
+﻿namespace VA.API.Customers.DeleteCustomer;
 
 
 public class DeleteCustomerEndpoint : ICarterModule

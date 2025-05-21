@@ -1,5 +1,4 @@
-﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using VA.Shared.Exceptions;
+﻿using VA.Shared.Exceptions;
 
 namespace VA.API.Customers.UpdateCustomer;
 
@@ -7,7 +6,7 @@ namespace VA.API.Customers.UpdateCustomer;
 //public record UpdateCustomerResult(bool IsSuccess);
 
 
- 
+
 
 internal class UpdateCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>

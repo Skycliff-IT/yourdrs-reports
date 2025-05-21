@@ -1,5 +1,4 @@
 namespace VA.API.Customers.CreateCustomer;
-
 public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCommand>
 {
     public CreateCustomerCommandValidator()

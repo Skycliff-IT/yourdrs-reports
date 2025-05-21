@@ -1,8 +1,6 @@
 ﻿using VA.Shared.Exceptions;
 
 namespace VA.API.Customers.DeleteCustomer;
-
-
 internal class DeleteCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<DeleteCustomerCommand, DeleteCustomerResponse>
 {

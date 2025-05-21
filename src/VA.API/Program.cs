@@ -1,9 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using System;
-using VA.API.Customers.CreateCustomer;
-using VA.API.Customers.DeleteCustomer;
-using VA.API.Customers.UpdateCustomer;
 //using VA.API.Customers.UpdateCustomer;
 using VA.Shared.Behaviors;
 using VA.Shared.Exceptions.Handler;

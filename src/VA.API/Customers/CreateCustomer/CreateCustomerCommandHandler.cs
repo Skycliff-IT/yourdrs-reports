@@ -1,10 +1,8 @@
 ﻿namespace VA.API.Customers.CreateCustomer;
-
 internal class CreateCustomerCommandHandler(CustomerContext context) : ICommandHandler<CreateCustomerCommand, CreateCustomerResponse>
 {
     public async Task<CreateCustomerResponse> Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
     {
-         
         //todo: implement mapster
         var customer = new Customer
         {

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading;
-using VA.API.Customers.UpdateCustomer;
+﻿using Microsoft.AspNetCore.Mvc;
 using VA.Shared.Behaviors;
 
 namespace VA.API.Customers.CreateCustomer;

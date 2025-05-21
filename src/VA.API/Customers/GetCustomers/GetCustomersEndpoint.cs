@@ -8,7 +8,7 @@ public class GetCustomersEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/Customers", async ([AsParameters] PaginationRequest request,
-                IQueryHandler<GetCustomersQuery,GetCustomersResponse> handler, CancellationToken cancellationToken) =>
+                IQueryHandler<GetCustomersQuery, GetCustomersResponse> handler, CancellationToken cancellationToken) =>
         {
             var result = await handler.Handle(new GetCustomersQuery(request), cancellationToken);
 

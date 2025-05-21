@@ -1,5 +1,4 @@
 ﻿namespace VA.API.Customers.GetCustomerById;
-
 public class GetCustomerByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
@@ -15,7 +14,7 @@ public class GetCustomerByIdEndpoint : ICarterModule
             return Results.Ok(response);
         })
         .WithName("GetCustomerById")
-        .Produces<GetCustomerByIdResponse>(StatusCodes.Status200OK)
+        .Produces<GetCustomerByIdResponse>()
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get Customer By Id")
         .WithDescription("Get Customer By Id");

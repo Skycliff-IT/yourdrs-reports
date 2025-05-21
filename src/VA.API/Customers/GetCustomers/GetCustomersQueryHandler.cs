@@ -11,7 +11,7 @@ internal class GetCustomersQueryHandler
     {
         var pageIndex = query.Request.PageIndex;
         var pageSize = query.Request.PageSize;
-        
+
         var totalCount = await context.Customers.LongCountAsync(cancellationToken);
 
         var customers = await context.Customers
