@@ -4,9 +4,8 @@ using VA.Shared.Exceptions;
 namespace VA.API.Customers.UpdateCustomer;
 
 public record UpdateCustomerCommand(Guid Id, string CustomerCode, string CustomerName)
-    : ICommand<UpdateCustomerResult>;
+    : ICommand<UpdateCustomerResponse>;
 //public record UpdateCustomerResult(bool IsSuccess);
-public record UpdateCustomerResult(bool IsSuccess, string? ErrorMessage = null, Customer? UpdatedCustomer = null);
 public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerCommand>
 {
     public UpdateCustomerCommandValidator()
@@ -26,10 +25,19 @@ public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerCo
     }
 }
 
+//public class UpdateCustomerHandler : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>
+//{
+//    public async Task<UpdateCustomerResponse> Handle(UpdateCustomerCommand command,
+//        CancellationToken cancellationToken = default)
+//    {
+//    }
+//}
+
+
 internal class UpdateCustomerCommandHandler(CustomerContext context)
-    : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResult>
+    : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>
 {
-    public async Task<UpdateCustomerResult> Handle(UpdateCustomerCommand command, CancellationToken cancellationToken)
+    public async Task<UpdateCustomerResponse> Handle(UpdateCustomerCommand command, CancellationToken cancellationToken)
     {
         var customer = await context.Customers.FindAsync([command.Id], cancellationToken);
 
@@ -44,6 +52,6 @@ internal class UpdateCustomerCommandHandler(CustomerContext context)
         context.Customers.Update(customer);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new UpdateCustomerResult(true, null, customer);
+        return new UpdateCustomerResponse(true, null, customer);
     }
 }

@@ -1,9 +1,8 @@
 ﻿
 namespace VA.API.Customers.CreateCustomer;
 
-public record CreateCustomerCommand(string CustomerCode, string CustomerName)
-    : ICommand<CreateCustomerResult>;
-public record CreateCustomerResult(Guid Id);
+public record CreateCustomerCommand(string CustomerCode, string CustomerName) :  ICommand<CreateCustomerResponse>;
+//public record CreateCustomerResult(Guid Id);
 
 public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCommand>
 {
@@ -22,10 +21,9 @@ public class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCo
     }
 }
 
-internal class CreateCustomerCommandHandler(CustomerContext context)
-    : ICommandHandler<CreateCustomerCommand, CreateCustomerResult>
+internal class CreateCustomerCommandHandler(CustomerContext context) : ICommandHandler<CreateCustomerCommand, CreateCustomerResponse>
 {
-    public async Task<CreateCustomerResult> Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
+    public async Task<CreateCustomerResponse> Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
     {
          
         //todo: implement mapster
@@ -39,6 +37,6 @@ internal class CreateCustomerCommandHandler(CustomerContext context)
         context.Customers.Add(customer);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new CreateCustomerResult(customer.Id);
+        return new CreateCustomerResponse(customer.Id);
     }
 }

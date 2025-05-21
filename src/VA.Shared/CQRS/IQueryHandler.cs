@@ -1,9 +1,8 @@
-﻿using MediatR;
+﻿//using MediatR;
 
 namespace VA.Shared.CQRS;
 public interface IQueryHandler<in TQuery, TResponse>
-    : IRequestHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>
-    where TResponse : notnull
 {
+    Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken);
 }

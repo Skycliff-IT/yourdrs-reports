@@ -3,18 +3,17 @@ using VA.Shared.Pagination;
 
 namespace VA.API.Customers.GetCustomers;
 
-public record GetCustomersQuery(PaginationRequest PaginationRequest) : IQuery<GetCustomersResult>;
-public record GetCustomersResult(PaginatedResult<CustomerDto> Customers);
+//public record GetCustomersQuery(PaginationRequest PaginationRequest) : IQuery<GetCustomersResult>;
+//public record GetCustomersResult(PaginatedResult<CustomerDto> Customers);
 
 internal class GetCustomersQueryHandler
 (CustomerContext context)
-    : IQueryHandler<GetCustomersQuery, GetCustomersResult>
+    : IQueryHandler<GetCustomersQuery, GetCustomersResponse>
 {
-    public async Task<GetCustomersResult> Handle(GetCustomersQuery query, CancellationToken cancellationToken)
+    public async Task<GetCustomersResponse> Handle(GetCustomersQuery query, CancellationToken cancellationToken)
     {
-
-        var pageIndex = query.PaginationRequest.PageIndex;
-        var pageSize = query.PaginationRequest.PageSize;
+        var pageIndex = query.Request.PageIndex;
+        var pageSize = query.Request.PageSize;
         
         var totalCount = await context.Customers.LongCountAsync(cancellationToken);
 
@@ -27,7 +26,7 @@ internal class GetCustomersQueryHandler
         var customerDtos = customers.ToCustomerDtoList();
 
 
-        return new GetCustomersResult(
+        return new GetCustomersResponse(
             new PaginatedResult<CustomerDto>(
                 pageIndex,
                 pageSize,

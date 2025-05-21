@@ -1,19 +1,21 @@
 ﻿
+
 namespace VA.API.Customers.UpdateCustomer;
 
 public record UpdateCustomerRequest(Guid Id, string CustomerCode, string CustomerName);
-public record UpdateCustomerResponse(bool IsSuccess);
+public record UpdateCustomerResponse(bool IsSuccess, string? ErrorMessage = null, Customer? UpdatedCustomer = null);
 
 public class UpdateCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPut("/Customers",
-            async (UpdateCustomerRequest request, ISender sender) =>
+            async (UpdateCustomerRequest request,
+                ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse> handler) =>
             {
                 var command = request.Adapt<UpdateCustomerCommand>();
 
-                var result = await sender.Send(command);
+                var result = await handler.Handle(command);
 
                 var response = result.Adapt<UpdateCustomerResponse>();
 
