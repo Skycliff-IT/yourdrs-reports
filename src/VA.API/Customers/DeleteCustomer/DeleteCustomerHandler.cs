@@ -2,16 +2,6 @@
 
 namespace VA.API.Customers.DeleteCustomer;
 
-public record DeleteCustomerCommand(Guid Id) : ICommand<DeleteCustomerResponse>;
-//public record DeleteCustomerResult(bool IsSuccess);
-
-public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCommand>
-{
-    public DeleteCustomerCommandValidator()
-    {
-        RuleFor(x => x.Id).NotEmpty().WithMessage("Customer ID is required");
-    }
-}
 
 internal class DeleteCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<DeleteCustomerCommand, DeleteCustomerResponse>

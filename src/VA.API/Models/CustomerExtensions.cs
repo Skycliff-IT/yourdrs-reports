@@ -1,4 +1,4 @@
-﻿namespace VA.API.Customers.GetCustomers;
+﻿namespace VA.API.Models;
 
 public static class CustomerExtensions
 {

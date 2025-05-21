@@ -2,8 +2,6 @@
 
 namespace VA.API.Customers.UpdateCustomer;
 
-public record UpdateCustomerRequest(Guid Id, string CustomerCode, string CustomerName);
-public record UpdateCustomerResponse(bool IsSuccess, string? ErrorMessage = null, Customer? UpdatedCustomer = null);
 
 public class UpdateCustomerEndpoint : ICarterModule
 {

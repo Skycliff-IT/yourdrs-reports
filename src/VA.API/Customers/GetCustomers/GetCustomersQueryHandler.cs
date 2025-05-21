@@ -3,9 +3,6 @@ using VA.Shared.Pagination;
 
 namespace VA.API.Customers.GetCustomers;
 
-//public record GetCustomersQuery(PaginationRequest PaginationRequest) : IQuery<GetCustomersResult>;
-//public record GetCustomersResult(PaginatedResult<CustomerDto> Customers);
-
 internal class GetCustomersQueryHandler
 (CustomerContext context)
     : IQueryHandler<GetCustomersQuery, GetCustomersResponse>

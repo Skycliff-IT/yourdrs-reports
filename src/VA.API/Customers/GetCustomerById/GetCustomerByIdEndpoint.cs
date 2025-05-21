@@ -1,11 +1,5 @@
 ﻿namespace VA.API.Customers.GetCustomerById;
 
-//public record GetCustomerByIdRequest();
-public record GetCustomerByIdResponse(Customer Customer);
-public class GetCustomerByIdQuery(Guid id) : IQuery<GetCustomerByIdResponse>
-{
-    public Guid Id { get; } = id;
-}
 public class GetCustomerByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

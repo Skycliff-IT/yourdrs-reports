@@ -4,8 +4,6 @@ using VA.API.Customers.CreateCustomer;
 
 namespace VA.API.Customers.DeleteCustomer;
 
-//public record DeleteCustomerRequest(Guid Id);
-public record DeleteCustomerResponse(bool IsSuccess);
 
 public class DeleteCustomerEndpoint : ICarterModule
 {

@@ -2,9 +2,6 @@
 
 namespace VA.API.Customers.GetCustomerById;
 
-//public record GetCustomerByIdQuery(Guid Id) : IQuery<GetCustomerByIdResult>;
-//public record GetCustomerByIdResult(Customer Customer);
-
 internal class GetCustomerByIdQueryHandler
     (CustomerContext context)
     : IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdResponse>
