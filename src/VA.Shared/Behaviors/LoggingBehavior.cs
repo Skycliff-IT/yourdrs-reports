@@ -1,4 +1,4 @@
-﻿//using MediatR;
+//using MediatR;
 //using Microsoft.Extensions.Logging;
 //using System.Diagnostics;
 
@@ -8,7 +8,7 @@
 //    : IPipelineBehavior<TRequest, TResponse>
 //    where TRequest : IRequest<TResponse>
 //    where TResponse : notnull
-//{
+//
 //    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
 //    {
 //        logger.LogInformation("[START] Handle request={Request} - Response={Response} - RequestData={RequestData}",
@@ -28,7 +28,7 @@
 //        logger.LogInformation("[END] Handled {Request} with {Response}", typeof(TRequest).Name, typeof(TResponse).Name);
 //        return response;
 //    }
-//}
+//
 
 
 //https://www.milanjovanovic.tech/blog/balancing-cross-cutting-concerns-in-clean-architecture

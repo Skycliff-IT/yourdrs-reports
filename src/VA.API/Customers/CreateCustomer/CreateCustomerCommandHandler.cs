@@ -1,9 +1,4 @@
-﻿
-namespace VA.API.Customers.CreateCustomer;
-
-
-
-
+﻿namespace VA.API.Customers.CreateCustomer;
 
 internal class CreateCustomerCommandHandler(CustomerContext context) : ICommandHandler<CreateCustomerCommand, CreateCustomerResponse>
 {

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,38 +6,37 @@ using System.Text;
 using System.Threading.Tasks;
 using VA.Shared.CQRS;
 
-namespace VA.Shared.Behaviors
+namespace VA.Shared.Behaviors;
+
+public interface IDispatcher
 {
-    public interface IDispatcher
+    Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken = default)
+        where TRequest : ICommand<TResponse>;
+}
+
+public class Dispatcher : IDispatcher
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public Dispatcher(IServiceProvider serviceProvider)
     {
-        Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken = default)
-            where TRequest : ICommand<TResponse>;
+        _serviceProvider = serviceProvider;
     }
 
-    public class Dispatcher : IDispatcher
+    public async Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken = default)
+        where TRequest : ICommand<TResponse>
     {
-        private readonly IServiceProvider _serviceProvider;
+        var behaviors = _serviceProvider.GetServices<IPipelineBehavior<TRequest, TResponse>>().Reverse().ToList();
+        var handler = _serviceProvider.GetRequiredService<ICommandHandler<TRequest, TResponse>>();
 
-        public Dispatcher(IServiceProvider serviceProvider)
+        RequestHandlerDelegate<TResponse> handlerDelegate = _ => handler.Handle(request, cancellationToken);
+
+        foreach (var behavior in behaviors)
         {
-            _serviceProvider = serviceProvider;
+            var next = handlerDelegate;
+            handlerDelegate = ct => behavior.Handle(request, next, ct);
         }
 
-        public async Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken = default)
-            where TRequest : ICommand<TResponse>
-        {
-            var behaviors = _serviceProvider.GetServices<IPipelineBehavior<TRequest, TResponse>>().Reverse().ToList();
-            var handler = _serviceProvider.GetRequiredService<ICommandHandler<TRequest, TResponse>>();
-
-            RequestHandlerDelegate<TResponse> handlerDelegate = _ => handler.Handle(request, cancellationToken);
-
-            foreach (var behavior in behaviors)
-            {
-                var next = handlerDelegate;
-                handlerDelegate = ct => behavior.Handle(request, next, ct);
-            }
-
-            return await handlerDelegate(cancellationToken);
-        }
+        return await handlerDelegate(cancellationToken);
     }
 }
