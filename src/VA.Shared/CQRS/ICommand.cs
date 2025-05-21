@@ -1,11 +1,7 @@
-﻿using MediatR;
+﻿namespace VA.Shared.CQRS;
 
-namespace VA.Shared.CQRS;
+public interface ICommand :  IBaseCommand;
 
-public interface ICommand : ICommand<Unit>
-{
-}
+public interface ICommand<out TResponse> :  IBaseCommand;
 
-public interface ICommand<out TResponse> : IRequest<TResponse>
-{
-}
+public interface IBaseCommand;

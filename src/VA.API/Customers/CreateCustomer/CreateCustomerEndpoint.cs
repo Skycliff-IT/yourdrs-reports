@@ -1,29 +1,32 @@
-﻿namespace VA.API.Customers.CreateCustomer;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading;
+using VA.API.Customers.UpdateCustomer;
+using VA.Shared.Behaviors;
 
-public record CreateCustomerRequest(string CustomerCode, string CustomerName);
+namespace VA.API.Customers.CreateCustomer;
 
-public record CreateCustomerResponse(Guid Id);
+
 
 public class CreateCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/Customers",
-            async (CreateCustomerRequest request, ISender sender) =>
-        {
-            var command = request.Adapt<CreateCustomerCommand>();
+                async (
+                    CreateCustomerRequest request,
+                    [FromServices] IDispatcher dispatcher,
+                    CancellationToken cancellationToken) =>
+                {
+                    var command = request.Adapt<CreateCustomerCommand>();
+                    var result = await dispatcher.Send<CreateCustomerCommand, CreateCustomerResponse>(command, cancellationToken);
 
-            var result = await sender.Send(command);
-
-            var response = result.Adapt<CreateCustomerResponse>();
-
-            return Results.Created($"/Customers/{response.Id}", response);
-
-        })
-        .WithName("CreateCustomer")
-        .Produces<CreateCustomerResponse>(StatusCodes.Status201Created)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .WithSummary("Create Customer")
-        .WithDescription("Create Customer");
+                    return Results.Created($"/Customers/{result.Id}", result);
+                })
+            .WithName("CreateCustomer")
+            .Produces<CreateCustomerResponse>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .WithSummary("Create Customer")
+            .WithDescription("Create Customer");
     }
 }

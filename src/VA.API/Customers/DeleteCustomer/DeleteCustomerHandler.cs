@@ -2,21 +2,11 @@
 
 namespace VA.API.Customers.DeleteCustomer;
 
-public record DeleteCustomerCommand(Guid Id) : ICommand<DeleteCustomerResult>;
-public record DeleteCustomerResult(bool IsSuccess);
-
-public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCommand>
-{
-    public DeleteCustomerCommandValidator()
-    {
-        RuleFor(x => x.Id).NotEmpty().WithMessage("Customer ID is required");
-    }
-}
 
 internal class DeleteCustomerCommandHandler(CustomerContext context)
-    : ICommandHandler<DeleteCustomerCommand, DeleteCustomerResult>
+    : ICommandHandler<DeleteCustomerCommand, DeleteCustomerResponse>
 {
-    public async Task<DeleteCustomerResult> Handle(DeleteCustomerCommand command, CancellationToken cancellationToken)
+    public async Task<DeleteCustomerResponse> Handle(DeleteCustomerCommand command, CancellationToken cancellationToken)
     {
         var customer = await context.Customers.FindAsync(new object[] { command.Id }, cancellationToken);
 
@@ -28,6 +18,6 @@ internal class DeleteCustomerCommandHandler(CustomerContext context)
         context.Customers.Remove(customer);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new DeleteCustomerResult(true);
+        return new DeleteCustomerResponse(true);
     }
 }

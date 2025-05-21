@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using System;
+using VA.API.Customers.CreateCustomer;
+using VA.API.Customers.DeleteCustomer;
+using VA.API.Customers.UpdateCustomer;
+//using VA.API.Customers.UpdateCustomer;
 using VA.Shared.Behaviors;
 using VA.Shared.Exceptions.Handler;
 
@@ -10,13 +14,42 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var assembly = typeof(Program).Assembly;
-builder.Services.AddMediatR(config =>
-{
-    config.RegisterServicesFromAssembly(assembly);
-    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-    //config.AddOpenBehavior(typeof(LoggingBehavior<,>));
-});
-builder.Services.AddValidatorsFromAssembly(assembly);
+//builder.Services.AddMediatR(config =>
+//{
+//    config.RegisterServicesFromAssembly(assembly);
+//    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+//    //config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+//});
+
+//builder.Services.AddScoped<ICommandHandler<CreateCustomerCommand, CreateCustomerResponse>, CreateCustomerCommandHandler>();
+//builder.Services.AddScoped<ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>, UpdateCustomerCommandHandler>();
+//builder.Services.AddScoped<ICommandHandler<DeleteCustomerCommand, DeleteCustomerResponse>, DeleteCustomerCommandHandler>();
+
+
+
+builder.Services.Scan(scan => scan.FromAssembliesOf(typeof(Program))
+    .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
+    .AsImplementedInterfaces()
+    .WithScopedLifetime()
+    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
+    .AsImplementedInterfaces()
+    .WithScopedLifetime()
+    .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+builder.Services.AddScoped<IDispatcher, Dispatcher>();
+
+//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandHandler<,>));
+//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandBaseHandler<>));
+
+//builder.Services.Decorate(typeof(IQueryHandler<,>), typeof(LoggingDecorator.QueryHandler<,>));
+//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
+//builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandBaseHandler<>));
+
+builder.Services.AddValidatorsFromAssembly(assembly, includeInternalTypes:true);
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
 
 builder.Services.AddCarter();
 

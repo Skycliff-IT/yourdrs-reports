@@ -1,16 +1,18 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
+using VA.API.Customers.CreateCustomer;
+
 namespace VA.API.Customers.DeleteCustomer;
 
-//public record DeleteCustomerRequest(Guid Id);
-public record DeleteCustomerResponse(bool IsSuccess);
 
 public class DeleteCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/Customers/{id}", async (Guid id, ISender sender) =>
+        app.MapDelete("/Customers/{id}", async (Guid id,
+                ICommandHandler<DeleteCustomerCommand, DeleteCustomerResponse> handler) =>
         {
-            var result = await sender.Send(new DeleteCustomerCommand(id));
+            var result = await handler.Handle(new DeleteCustomerCommand(id));
 
             var response = result.Adapt<DeleteCustomerResponse>();
 

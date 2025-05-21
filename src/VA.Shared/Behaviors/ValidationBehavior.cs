@@ -1,8 +1,17 @@
 ﻿using FluentValidation;
-using MediatR;
+////using MediatR;
 using VA.Shared.CQRS;
 
 namespace VA.Shared.Behaviors;
+
+
+public delegate Task<TResponse> RequestHandlerDelegate<TResponse>(CancellationToken cancellationToken = default);
+
+public interface IPipelineBehavior<TRequest, TResponse>
+{
+    Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
+}
+
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICommand<TResponse>
 {
