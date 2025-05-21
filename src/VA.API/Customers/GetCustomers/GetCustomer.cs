@@ -1,16 +1,14 @@
-﻿using VA.Shared.Pagination;
+using VA.Shared.Pagination;
 
-namespace VA.API.Customers.GetCustomers
+namespace VA.API.Customers.GetCustomers;
+
+public class GetCustomersQuery : IQuery<GetCustomersResponse>
 {
-    public class GetCustomersQuery : IQuery<GetCustomersResponse>
+    public PaginationRequest Request { get; }
+
+    public GetCustomersQuery(PaginationRequest request)
     {
-        public PaginationRequest Request { get; }
-
-        public GetCustomersQuery(PaginationRequest request)
-        {
-            Request = request;
-        }
+        Request = request;
     }
-    public record GetCustomersResponse(PaginatedResult<CustomerDto> Customers);
-
 }
+public record GetCustomersResponse(PaginatedResult<CustomerDto> Customers);

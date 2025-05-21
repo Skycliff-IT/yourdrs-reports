@@ -1,10 +1,9 @@
-﻿namespace VA.API.Customers.DeleteCustomer
+namespace VA.API.Customers.DeleteCustomer;
+
+public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCommand>
 {
-    public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCommand>
+    public DeleteCustomerCommandValidator()
     {
-        public DeleteCustomerCommandValidator()
-        {
-            RuleFor(x => x.Id).NotEmpty().WithMessage("Customer ID is required");
-        }
+        RuleFor(x => x.Id).NotEmpty().WithMessage("Customer ID is required");
     }
 }

@@ -46,7 +46,7 @@ builder.Services.AddScoped<IDispatcher, Dispatcher>();
 //builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
 //builder.Services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandBaseHandler<>));
 
-builder.Services.AddValidatorsFromAssembly(assembly, includeInternalTypes:true);
+builder.Services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 

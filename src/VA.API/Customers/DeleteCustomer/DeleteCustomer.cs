@@ -1,6 +1,5 @@
-﻿namespace VA.API.Customers.DeleteCustomer
-{
-    public record DeleteCustomerResponse(bool IsSuccess);
+namespace VA.API.Customers.DeleteCustomer;
 
-    public record DeleteCustomerCommand(Guid Id) : ICommand<DeleteCustomerResponse>;
-}
+public record DeleteCustomerResponse(bool IsSuccess);
+
+public record DeleteCustomerCommand(Guid Id) : ICommand<DeleteCustomerResponse>;
