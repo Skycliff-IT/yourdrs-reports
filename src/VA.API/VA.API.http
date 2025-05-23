@@ -1,6 +1,42 @@
 @VA.API_HostAddress = http://localhost:5215
 
-GET {{VA.API_HostAddress}}/weatherforecast/
+# Get all customers
+GET {{VA.API_HostAddress}}/customers
+Accept: application/json
+
+###
+
+# Get a customer by ID
+GET {{VA.API_HostAddress}}/customers/{customerId}
+Accept: application/json
+
+###
+
+# Create a new customer
+POST {{VA.API_HostAddress}}/customers
+Content-Type: application/json
+
+{
+  "customerCode": "CUST001",
+  "customerName": "Acme Corporation"
+}
+
+###
+
+# Update an existing customer
+PUT {{VA.API_HostAddress}}/customers/{customerId}
+Content-Type: application/json
+
+{
+  "id": "{customerId}",
+  "customerCode": "CUST001-UPDATED",
+  "customerName": "Acme Corporation Updated"
+}
+
+###
+
+# Delete a customer
+DELETE {{VA.API_HostAddress}}/customers/{customerId}
 Accept: application/json
 
 ###
