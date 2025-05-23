@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
+using VA.CrossCutting.CQRS;
 ////using MediatR;
-using VA.Shared.CQRS;
 
-namespace VA.Shared.Behaviors;
+namespace VA.CrossCutting.Behaviors;
 
 
 public delegate Task<TResponse> RequestHandlerDelegate<TResponse>(CancellationToken cancellationToken = default);

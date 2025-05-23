@@ -1,4 +1,7 @@
-﻿namespace VA.API.Customers.GetCustomers;
+﻿using VA.CrossCutting.CQRS;
+using VA.CrossCutting.Pagination;
+
+namespace VA.API.Customers.GetCustomers;
 public class GetCustomersEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

@@ -1,5 +1,7 @@
 using Scalar.AspNetCore;
-using VA.Shared.Exceptions.Handler;
+using VA.CrossCutting.Behaviors;
+using VA.CrossCutting.CQRS;
+using VA.CrossCutting.Exceptions.Handler;
 
 var builder = WebApplication.CreateBuilder(args);
 

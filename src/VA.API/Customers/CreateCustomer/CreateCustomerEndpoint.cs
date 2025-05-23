@@ -1,4 +1,6 @@
-﻿namespace VA.API.Customers.CreateCustomer;
+﻿using VA.CrossCutting.CQRS;
+
+namespace VA.API.Customers.CreateCustomer;
 public class CreateCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

@@ -1,4 +1,6 @@
-﻿namespace VA.API.Customers.UpdateCustomer;
+﻿using VA.CrossCutting.CQRS;
+
+namespace VA.API.Customers.UpdateCustomer;
 public class UpdateCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

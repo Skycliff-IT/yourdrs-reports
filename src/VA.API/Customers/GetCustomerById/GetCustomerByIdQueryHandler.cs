@@ -1,4 +1,7 @@
-﻿namespace VA.API.Customers.GetCustomerById;
+﻿using VA.CrossCutting.CQRS;
+using VA.CrossCutting.Exceptions;
+
+namespace VA.API.Customers.GetCustomerById;
 internal class GetCustomerByIdQueryHandler
     (CustomerContext context)
     : IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdResponse>

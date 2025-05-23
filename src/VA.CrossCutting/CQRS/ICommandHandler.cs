@@ -1,5 +1,5 @@
 ﻿//using MediatR;
-namespace VA.Shared.CQRS;
+namespace VA.CrossCutting.CQRS;
 
 //todo: look at this interface
 //public interface ICommandHandler<in TCommand>
