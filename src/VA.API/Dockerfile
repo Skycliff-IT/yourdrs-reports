@@ -12,7 +12,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["VA.API/VA.API.csproj", "VA.API/"]
+COPY ["src/VA.API/VA.API.csproj", "src/VA.API/"]
 RUN dotnet restore "./VA.API/VA.API.csproj"
 COPY . .
 WORKDIR "/src/VA.API"
