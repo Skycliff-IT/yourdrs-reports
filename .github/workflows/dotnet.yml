@@ -20,15 +20,15 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore src/VA.sln
+      run: dotnet restore VA.sln
 
     - name: Build
-      run: dotnet build src/VA.sln --configuration Release --no-restore
+      run: dotnet build VA.sln --configuration Release --no-restore
 
-    # - name: Test
-    #   run: dotnet test --no-build --verbosity normal
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
 
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build -t vertical-slice-architecture:${{ github.sha }} -f src/VA.API/Dockerfile .
+      run: docker build -t vertical-slice-architecture:${{ github.sha }} -f VA.API/Dockerfile .
           
