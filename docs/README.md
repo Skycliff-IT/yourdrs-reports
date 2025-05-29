@@ -1,9 +1,9 @@
 # Vertical-Slice-Architecture
 
-A clean and modular .NET 9 template using **Vertical Slice Architecture**. Ideal for building scalable, maintainable APIs with CQRS, Mediator DP, FluentValidation, and EF Core/Dapper.
-
+A clean, modular .NET 9 template using **Vertical Slice Architecture**—ideal for building scalable, maintainable APIs with CQRS, Mediator, FluentValidation, and EF Core/Dapper.
 
 ## ✅ Features
+
 - Vertical slice structure per use case (CQRS)
 - Minimal API with Carter for clean endpoint definitions
 - Mediator Design Pattern for command/query dispatching
@@ -16,44 +16,59 @@ A clean and modular .NET 9 template using **Vertical Slice Architecture**. Ideal
 
 Follow these steps to set up and run the project:
 
-1. **Clone the repository**
-    ```bash
-    git clone https://github.com/Amitpnk/Vertical-Slice-Architecture.git
-    cd Vertical-Slice-Architecture
-    ```
+### 1. Clone the Repository
 
-2. **Run with Docker**
+```bash
+git clone https://github.com/Amitpnk/Vertical-Slice-Architecture.git
+cd Vertical-Slice-Architecture
+```
 
-    Build the Docker image and start the containers:
+### 2. Build and Run with Docker
 
-    ```bash
-    docker build -f VA.API/Dockerfile -t va-api .
-    docker-compose up --build
-    ```
+To build and start the containers:
 
-    To run the containers in detached mode, use:
+```bash
+docker-compose up --build
+```
 
-    ```bash
-    docker-compose up -d
-    ```
+To run the containers in detached mode:
 
-3. **Open your browser**
+```bash
+docker-compose up -d
+```
 
-    Once the containers are running, open your browser and navigate to:
+> **Note:**  
+> Building the Docker image manually is not usually required, but if needed, use:
+>
+> ```bash
+> docker build -f src/VA.API/Dockerfile -t va-api .
+> ```
 
-    ```
-    http://localhost:5000
-    ```
+### 3. Rebuild and Restart Containers
 
-    You should see the API running. Adjust the port if you have changed it in the Docker configuration.
+If you need to rebuild and restart the containers (for example, after making changes):
 
+```bash
+docker-compose down -v
+docker-compose up --build
+```
 
-## 📄 Licence Used
+### 4. Open the Application in Your Browser
+
+Once the containers are running, open your browser and navigate to:
+
+```
+http://localhost:5000
+```
+
+You should see the API running. Adjust the port if you have changed it in the Docker configuration.
+
+## 📄 License
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Amitpnk/Vertical-Slice-Architecture/blob/main/LICENSE)
 
-See the contents of the LICENSE file for details
+See the LICENSE file for details.
 
 ## 📬 Contact
 
-Having any issues or troubles getting started? Drop a mail to amit.naik8103@gmail.com or [Raise a Bug or Feature Request](https://github.com/Amitpnk/Vertical-Slice-Architecture/issues/new). Always happy to help.
+Having issues or need help getting started? Email amit.naik8103@gmail.com or [raise a bug or feature request](https://github.com/Amitpnk/Vertical-Slice-Architecture/issues/new). Always happy to help.

@@ -1,4 +1,4 @@
-namespace VA.Shared.CQRS;
+namespace VA.CrossCutting.CQRS;
 
 public interface IDispatcher
 {

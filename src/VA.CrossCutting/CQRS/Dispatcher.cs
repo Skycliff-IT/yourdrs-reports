@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using VA.Shared.Behaviors;
+using VA.CrossCutting.Behaviors;
 
-namespace VA.Shared.CQRS;
+namespace VA.CrossCutting.CQRS;
 
 public class Dispatcher : IDispatcher
 {

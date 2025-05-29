@@ -6,7 +6,3 @@ global using Microsoft.EntityFrameworkCore;
 global using System.ComponentModel.DataAnnotations;
 global using VA.API.Data;
 global using VA.API.Models;
-global using VA.Shared.Behaviors;
-global using VA.Shared.CQRS;
-global using VA.Shared.Exceptions;
-global using VA.Shared.Pagination;

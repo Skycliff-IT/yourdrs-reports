@@ -1,3 +1,6 @@
+using VA.CrossCutting.CQRS;
+using VA.CrossCutting.Pagination;
+
 namespace VA.API.Customers.GetCustomers;
 public class GetCustomersQuery(PaginationRequest request) : IQuery<GetCustomersResponse>
 {

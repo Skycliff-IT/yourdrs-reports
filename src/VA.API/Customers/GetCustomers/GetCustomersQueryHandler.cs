@@ -1,5 +1,8 @@
-﻿namespace VA.API.Customers.GetCustomers;
-internal class GetCustomersQueryHandler
+﻿using VA.CrossCutting.CQRS;
+using VA.CrossCutting.Pagination;
+
+namespace VA.API.Customers.GetCustomers;
+public class GetCustomersQueryHandler
 (CustomerContext context)
     : IQueryHandler<GetCustomersQuery, GetCustomersResponse>
 {

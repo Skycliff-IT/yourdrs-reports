@@ -1,4 +1,6 @@
-﻿namespace VA.API.Customers.GetCustomerById;
+﻿using VA.CrossCutting.CQRS;
+
+namespace VA.API.Customers.GetCustomerById;
 public class GetCustomerByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

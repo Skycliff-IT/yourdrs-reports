@@ -1,4 +1,4 @@
-﻿namespace VA.Shared.Exceptions;
+﻿namespace VA.CrossCutting.Exceptions;
 public class InternalServerException : Exception
 {
     public InternalServerException(string message) : base(message)

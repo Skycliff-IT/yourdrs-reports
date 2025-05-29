@@ -1,4 +1,6 @@
-﻿namespace VA.API.Customers.DeleteCustomer;
+﻿using VA.CrossCutting.CQRS;
+
+namespace VA.API.Customers.DeleteCustomer;
 public class DeleteCustomerEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)

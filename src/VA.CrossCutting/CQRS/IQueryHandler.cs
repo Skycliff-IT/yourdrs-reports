@@ -1,6 +1,6 @@
 ﻿//using MediatR;
 
-namespace VA.Shared.CQRS;
+namespace VA.CrossCutting.CQRS;
 public interface IQueryHandler<in TQuery, TResponse>
     where TQuery : IQuery<TResponse>
 {

@@ -1,4 +1,4 @@
-﻿namespace VA.Shared.Exceptions;
+﻿namespace VA.CrossCutting.Exceptions;
 public class BadRequestException : Exception
 {
     public BadRequestException(string message) : base(message)

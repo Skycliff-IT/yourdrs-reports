@@ -33,6 +33,6 @@ docker-compose down --volumes --rmi all
 
 
 cd.. (parent folder, where there is sln file contains)
-docker build -f VA.API/Dockerfile -t va-api .
+docker build -f src/VA.API/Dockerfile -t va-api .
 
 docker logs aspnetcore-app

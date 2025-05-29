@@ -1,4 +1,7 @@
-﻿namespace VA.API.Customers.UpdateCustomer;
+﻿using VA.CrossCutting.CQRS;
+using VA.CrossCutting.Exceptions;
+
+namespace VA.API.Customers.UpdateCustomer;
 internal class UpdateCustomerCommandHandler(CustomerContext context)
     : ICommandHandler<UpdateCustomerCommand, UpdateCustomerResponse>
 {
