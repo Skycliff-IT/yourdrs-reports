@@ -1,6 +1,41 @@
-@VA.API_HostAddress = http://localhost:5215
+@VA.API_HostAddress = http://localhost:5000
 
-GET {{VA.API_HostAddress}}/weatherforecast/
+### Get all customers (with optional pagination)
+GET {{VA.API_HostAddress}}/Customers?pageIndex=1&pageSize=10
+Accept: application/json
+
+###
+
+### Get a customer by ID
+GET {{VA.API_HostAddress}}/Customers/{{customerId}}
+Accept: application/json
+
+###
+
+### Create a new customer
+POST {{VA.API_HostAddress}}/Customers
+Content-Type: application/json
+
+{
+  "customerCode": "CUST001",
+  "customerName": "John Doe"
+}
+
+###
+
+### Update an existing customer
+PUT {{VA.API_HostAddress}}/Customers/{{customerId}}
+Content-Type: application/json
+
+{
+  "customerCode": "CUST001",
+  "customerName": "John Doe Updated"
+}
+
+###
+
+### Delete a customer
+DELETE {{VA.API_HostAddress}}/Customers/{{customerId}}
 Accept: application/json
 
 ###
