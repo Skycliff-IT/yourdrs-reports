@@ -15,10 +15,5 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
-    <None Include="test\VA.API.Tests\Customers\GetCustomers\GetCustomersQueryHandlerTests.cs" />
-    <None Include="test\VA.API.Tests\Customers\GetCustomers\GetCustomersQueryTests.cs" />
-    <None Include="test\VA.API.Tests\Data\CustomerContextTests.cs" />
-    <None Include="test\VA.API.Tests\Models\CustomerDtoTests.cs" />
-    <None Include="test\VA.API.Tests\Models\CustomerExtensionsTests.cs" />
   </ItemGroup>
-</Project>
+ </Project>
