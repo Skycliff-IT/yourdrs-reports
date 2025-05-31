@@ -2,7 +2,7 @@
 
 This guide explains how to manage Kubernetes contexts and deploy resources using `kubectl`.
 
-## 2. List Available Contexts
+## 1. List Available Contexts
 
 Lists all configured contexts and highlights the current one:
 
@@ -17,7 +17,7 @@ CURRENT   NAME              CLUSTER           AUTHINFO                          
           docker-desktop    docker-desktop    docker-desktop
 ```
 
-## 3. Switch Context
+## 2. Switch Context
 
 Switches to Docker Desktop:
 
@@ -31,7 +31,7 @@ kubectl config use-context docker-desktop
 Switched to context "docker-desktop".
 ```
 
-## 4. Confirm the Active Context
+## 3. Confirm the Active Context
 
 Verify the context switch:
 
@@ -44,7 +44,7 @@ kubectl config current-context
 docker-desktop
 ```
 
-## 5. Apply Deployment and Service Manifests
+## 4. Apply Deployment and Service Manifests
 
 Deploy resources defined in YAML files:
 
@@ -59,7 +59,7 @@ deployment.apps/va-api created
 service/va-api-service created
 ```
 
-## 6. Verify Service Status
+## 5. Verify Service Status
 
 Check the status of the deployed service:
 
@@ -76,7 +76,7 @@ va-api-service   LoadBalancer   10.96.138.88   <pending>     80:32649/TCP   8s
 > **Note:**  
 > When using the `LoadBalancer` service type in a local Kubernetes environment (such as Docker Desktop), the `EXTERNAL-IP` may remain in `<pending>` state. Local clusters typically do not provision external load balancers automatically.
 
-## 7. Example: Inspecting Services and Pods
+## 6. Example: Inspecting Services and Pods
 
 Below are example commands and outputs for inspecting services, describing a service, checking pod status, and viewing logs.
 
@@ -138,4 +138,3 @@ va-api-7b6d99866d-dwxmk            0/1     ImagePullBackOff   0                 
 ```sh
 kubectl logs va-api-7b6d99866d-dwxmk
 ```
-
