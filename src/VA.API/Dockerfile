@@ -13,10 +13,10 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/VA.API/VA.API.csproj", "src/VA.API/"]
-RUN dotnet restore "./VA.API/VA.API.csproj"
+RUN dotnet restore "src/VA.API/VA.API.csproj"
 COPY . .
 WORKDIR "/src/VA.API"
-RUN dotnet build "./VA.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./src/VA.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
