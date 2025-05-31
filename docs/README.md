@@ -1,5 +1,7 @@
 # Vertical-Slice-Architecture
 
+[![.NET Build & Test](https://github.com/Amitpnk/Vertical-Slice-Architecture/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Amitpnk/Vertical-Slice-Architecture/actions/workflows/dotnet.yml)
+
 A clean, modular .NET 9 template using **Vertical Slice Architecture**—ideal for building scalable, maintainable APIs with CQRS, Mediator, FluentValidation, and EF Core/Dapper.
 
 ## ✅ Features
