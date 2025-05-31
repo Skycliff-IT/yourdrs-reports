@@ -35,9 +35,14 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Set lowercase repo variables
+      id: vars
+      run: |
+        echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+        echo "REPO_LC=${GITHUB_REPOSITORY##*/}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+
     - name: Build and push Docker image
       run: |
-        docker build -f VA.API/Dockerfile -t ghcr.io/${{ github.repository_owner,, }}/${{ github.event.repository.name,, }}/va-api:latest .
-        docker push ghcr.io/${{ github.repository_owner,, }}/${{ github.event.repository.name,, }}/va-api:latest
+        docker build -f VA.API/Dockerfile -t ghcr.io/${OWNER_LC}/${REPO_LC}/va-api:latest .
+        docker push ghcr.io/${OWNER_LC}/${REPO_LC}/va-api:latest
       working-directory: src
-          
