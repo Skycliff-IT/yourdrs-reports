@@ -15,9 +15,18 @@ spec:
       containers:
       - name: va-api
         image: va-api:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
-        # Add other environment variables as needed
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=mysql;Database=testdb;User=appuser;Password=apppassword;"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
