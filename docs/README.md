@@ -129,9 +129,9 @@ src/
         ├── GlobalUsing.cs
         ├── my-sql.md
         ├── Program.cs
-        ├── VA.API.csproj
-        └── VA.API.http
-    └── VA.CrossCutting/
+        ├── Yourdrs.Reports.API.csproj
+        └── Yourdrs.Reports.API.http
+    └── Yourdrs.CrossCutting/
         ├── Behaviors/
             ├── LoggingBehavior.cs
             └── ValidationBehavior.cs
@@ -151,9 +151,9 @@ src/
         ├── Pagination/
             ├── PaginatedResult.cs
             └── PaginationRequest.cs
-        └── VA.CrossCutting.csproj
+        └── Yourdrs.CrossCutting.csproj
 test/
-    └── VA.API.Tests/
+    └── Yourdrs.Reports.API.Tests/
         ├── Customers/
             └── GetCustomers/
                 ├── GetCustomersQueryHandlerTests.cs
@@ -164,7 +164,7 @@ test/
             ├── CustomerDtoTests.cs
             ├── CustomerExtensionsTests.cs
             └── CustomerTests.cs
-        └── VA.API.Tests.csproj
+        └── Yourdrs.Reports.API.Tests.csproj
 .dockerignore
 .gitignore
 docker-compose.dcproj
