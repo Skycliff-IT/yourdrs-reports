@@ -62,11 +62,11 @@ builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<CustomerContext>();
-    db.Database.Migrate();
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var db = scope.ServiceProvider.GetRequiredService<CustomerContext>();
+//     db.Database.Migrate();
+// }
 
 app.MapOpenApi();
 app.MapScalarApiReference();
