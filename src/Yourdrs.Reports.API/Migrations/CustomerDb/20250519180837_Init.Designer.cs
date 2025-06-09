@@ -11,7 +11,7 @@ using Yourdrs.Reports.API.Data;
 
 namespace Yourdrs.Reports.API.Migrations.CustomerDb;
 
-[DbContext(typeof(CustomerContext))]
+[DbContext(typeof(ApplicationDbContext))]
 [Migration("20250519180837_Init")]
 partial class Init
 {
