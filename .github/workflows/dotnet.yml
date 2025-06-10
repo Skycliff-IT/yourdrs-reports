@@ -20,13 +20,13 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore Yourdrs.Reports.API
+      run: dotnet restore src/Yourdrs.Reports.API.sln
 
     - name: Build
-      run: dotnet build Yourdrs.Reports.API.sln --configuration Release --no-restore
+      run: dotnet build src/Yourdrs.Reports.API.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test Yourdrs.Reports.API.sln --no-build --configuration Release --verbosity normal
+      run: dotnet test src/Yourdrs.Reports.API.sln --no-build --configuration Release --verbosity normal
 
     - name: Log in to GHCR
       uses: docker/login-action@v3
