@@ -10,7 +10,7 @@ using Yourdrs.Reports.API.Data;
 
 namespace Yourdrs.Reports.API.Migrations.CustomerDb;
 
-[DbContext(typeof(CustomerContext))]
+[DbContext(typeof(ApplicationDbContext))]
 partial class CustomerContextModelSnapshot : ModelSnapshot
 {
     protected override void BuildModel(ModelBuilder modelBuilder)
