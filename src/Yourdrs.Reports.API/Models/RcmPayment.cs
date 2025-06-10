@@ -1,6 +1,6 @@
 ﻿namespace Yourdrs.Reports.API.Models;
 
-public partial class RcmPayment
+public class RcmPayment
 {
     public uint Id { get; set; }
 

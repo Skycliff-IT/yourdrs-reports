@@ -1,6 +1,6 @@
 ﻿namespace Yourdrs.Reports.API.Models;
 
-public partial class SurgeryInfoOtherDetail
+public class SurgeryInfoOtherDetail
 {
     public uint Id { get; set; }
 
