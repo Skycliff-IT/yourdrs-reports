@@ -49,4 +49,16 @@ public partial class Appointment
     public uint? V1AppointmentId { get; set; }
 
     public uint? V2AppointmentId { get; set; }
+
+    public virtual Location? Location { get; set; }
+
+    public virtual Practice? Practice { get; set; }
+
+    public virtual ICollection<RcmCheckDetail> RcmCheckDetails { get; set; } = new List<RcmCheckDetail>();
+
+    public virtual ICollection<RcmClaim> RcmClaims { get; set; } = new List<RcmClaim>();
+
+    public virtual ICollection<RcmPayment> RcmPayments { get; set; } = new List<RcmPayment>();
+
+    public virtual ICollection<SurgeryInfoOtherDetail> SurgeryInfoOtherDetails{ get; set; } = new List<SurgeryInfoOtherDetail>();
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Yourdrs.Reports.API.Models;
+﻿namespace Yourdrs.Reports.API.Models;
 
 public partial class RcmPayment
 {
@@ -70,4 +67,10 @@ public partial class RcmPayment
     public DateTime? ModifiedDate { get; set; }
 
     public uint? ModifiedBy { get; set; }
+
+    public virtual Appointment? Appointment { get; set; }
+
+    public virtual RcmCheckDetail? CheckDetails { get; set; }
+
+    public virtual RcmClaim? Claim { get; set; }
 }

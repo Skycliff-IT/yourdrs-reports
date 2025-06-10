@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Yourdrs.Reports.API.Models;
+﻿namespace Yourdrs.Reports.API.Models;
 
 public partial class PatientAdvocate
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Yourdrs.Reports.API.Models;
+﻿namespace Yourdrs.Reports.API.Models;
 
 public partial class Practice
 {
@@ -20,4 +17,8 @@ public partial class Practice
     public uint ModifiedBy { get; set; }
 
     public DateTime ModifiedDate { get; set; }
+
+    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
+    public virtual ICollection<RcmClaim> RcmClaims { get; set; } = new List<RcmClaim>();
 }

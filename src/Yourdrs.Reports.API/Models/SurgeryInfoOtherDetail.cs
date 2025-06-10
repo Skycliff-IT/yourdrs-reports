@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Yourdrs.Reports.API.Models;
+﻿namespace Yourdrs.Reports.API.Models;
 
 public partial class SurgeryInfoOtherDetail
 {
@@ -52,4 +49,6 @@ public partial class SurgeryInfoOtherDetail
     public uint? ModifiedBy { get; set; }
 
     public DateTime? ModifiedDate { get; set; }
+
+    public virtual Appointment Appointment { get; set; } = null!;
 }
