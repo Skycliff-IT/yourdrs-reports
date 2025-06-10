@@ -1,6 +1,4 @@
-﻿using Yourdrs.Reports.API.Features.Reports.GetPracticeCounts;
-
-namespace Yourdrs.Reports.API.Data;
+﻿namespace Yourdrs.Reports.API.Data;
 
 public partial class ApplicationDbContext : DbContext
 {
@@ -31,15 +29,12 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<SurgeryInfoOtherDetail> SurgeryInfoOtherDetails { get; set; }
 
-    public virtual DbSet<PracticeCountResponse> PracticeCountResponse { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql("server=yd-v2-rpt-dev.cluster-custom-csrinnf2oqvq.ap-south-1.rds.amazonaws.com;user=ydrptadm;password=Skyrptadm#1;database=ydv2devhemaheascnew", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.32-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<PracticeCountResponse>().HasNoKey();
-
         modelBuilder
             .UseCollation("utf8mb4_unicode_ci")
             .HasCharSet("utf8mb4");
