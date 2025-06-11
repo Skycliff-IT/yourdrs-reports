@@ -5,11 +5,10 @@ public static class CsvHelper
     public static string? ToCsvOrNull(string? input) =>
         string.IsNullOrWhiteSpace(input) ? null : input.Replace(" ", "");
 
-    public static List<int> ParseCsvToIntList(string? csv)
+    public static List<int> ParseCsvToIntList(string csv)
     {
         if (string.IsNullOrWhiteSpace(csv))
             return new List<int>();
-
         return csv
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
             .Select(s => int.TryParse(s.Trim(), out var val) ? val : (int?)null)
@@ -17,4 +16,14 @@ public static class CsvHelper
             .Select(x => x!.Value)
             .ToList();
     }
+
+
+    public static Func<string?, string> ConvertCsvParam = (idString) =>
+    {
+        if (string.IsNullOrWhiteSpace(idString))
+        {
+            return null;
+        }
+        return string.Join(",", idString.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()));
+    };
 }

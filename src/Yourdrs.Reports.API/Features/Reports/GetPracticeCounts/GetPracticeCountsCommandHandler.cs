@@ -16,10 +16,10 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
         var procedureTypeIds = CsvHelper.ParseCsvToIntList(command.ProcedureTypeIds);
         var patientAdvocateIds = CsvHelper.ParseCsvToIntList(command.PatientAdvocateIds);
 
-        var baseQuery = from app in context.Appointments
-                        join aprc in context.Practices on app.PracticeId equals aprc.Id
-                        join aloc in context.Locations on app.LocationId equals aloc.Id
-                        where app.IsActive == 1 && aprc.IsActive == 1 && aloc.IsActive == 1
+        var baseQuery = from app in context.Appointments                         
+                        join aprc in context.Practices on new { Id = app.PracticeId, IsActive = (byte)1 } equals new { Id = (ushort?)aprc.Id, aprc.IsActive }   
+                        join aloc in context.Locations on new { Id = app.LocationId, IsActive = (byte)1 } equals new { Id = (ushort?)aloc.Id, aloc.IsActive }
+                        where app.IsActive == 1
                         select new { app, aprc, aloc };
 
         IQueryable<AppointmentJoinDto> query = baseQuery
@@ -37,8 +37,7 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
         if (command.BillingTypeId.HasValue || command.PostedStartDate.HasValue || command.PostedEndDate.HasValue)
         {
             query = from q in query
-                    join clmRaw in context.RcmClaims 
-                    on q.app.Id equals clmRaw.AppointmentId into clmJoin
+                    join clmRaw in context.RcmClaims on new {Id = q.app.Id, IsActive = (byte?)1 } equals new {Id = clmRaw.AppointmentId , clmRaw.IsActive } into clmJoin
                     from clm in clmJoin.DefaultIfEmpty()
 
                     select new AppointmentJoinDto
@@ -56,11 +55,10 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
         if (command.PostedStartDate.HasValue || command.PostedEndDate.HasValue)
         {
             query = from q in query
-                    join pay in context.RcmPayments on q.clm.Id equals pay.ClaimId into payJoin
+                    join payRaw in context.RcmPayments on new { Id = q.clm.Id , IsActive = (byte)1 } equals new { Id =(uint)(payRaw.ClaimId ?? 0), payRaw.IsActive }  into payJoin
                     from pay in payJoin.DefaultIfEmpty()
-                    join chk in context.RcmCheckDetails on pay.CheckDetailsId equals chk.Id into chkJoin
+                    join chkRaw in context.RcmCheckDetails on new { Id = pay.CheckDetailsId, IsActive = (byte)1 } equals new { Id = (uint?)chkRaw.Id, chkRaw.IsActive } into chkJoin
                     from chk in chkJoin.DefaultIfEmpty()
-                    where pay.IsActive == 1 && chk.IsActive == 1
                     select new AppointmentJoinDto
                     {
                         app = q.app,
@@ -76,9 +74,8 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
         if ((procedureIds != null && procedureIds.Any()) || (procedureTypeIds != null && procedureTypeIds.Any()))
         {
             query = from q in query
-                    join surg in context.SurgeryInfoOtherDetails on q.app.Id equals surg.AppointmentId into surgJoin
+                    join surgRaw in context.SurgeryInfoOtherDetails on new {Id = q.app.Id, IsActive = (byte)1 } equals new { Id = surgRaw.AppointmentId, surgRaw.IsActive}  into surgJoin
                     from surg in surgJoin.DefaultIfEmpty()
-                    where surg.IsActive == 1
                     select new AppointmentJoinDto
                     {
                         app = q.app,
