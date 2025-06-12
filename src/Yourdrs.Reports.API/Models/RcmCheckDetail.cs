@@ -1,6 +1,6 @@
 ﻿namespace Yourdrs.Reports.API.Models;
 
-public partial class RcmCheckDetail
+public class RcmCheckDetail
 {
     public uint Id { get; set; }
 

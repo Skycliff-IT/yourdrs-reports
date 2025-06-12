@@ -1,6 +1,6 @@
 ﻿namespace Yourdrs.Reports.API.Models;
 
-public partial class Practice
+public class Practice
 {
     public ushort Id { get; set; }
 
