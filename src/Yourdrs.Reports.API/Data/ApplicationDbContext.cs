@@ -13,8 +13,10 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<PracticeCountResponse> PracticeCountResponses { get; set; }
+    //public DbSet<PracticeCountResponse> PracticeCountResponses { get; set; }
+
     public virtual DbSet<Customer> Customers { get; set; }
+
     public virtual DbSet<Appointment> Appointments { get; set; }
 
     public virtual DbSet<Location> Locations { get; set; }
@@ -31,6 +33,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<SurgeryInfoOtherDetail> SurgeryInfoOtherDetails { get; set; }
 
+    public virtual DbSet<Episode> Episodes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql("server=yd-v2-rpt-dev.cluster-custom-csrinnf2oqvq.ap-south-1.rds.amazonaws.com;user=ydrptadm;password=Skyrptadm#1;database=ydv2devhemaheascnew", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.32-mysql"));
 
@@ -40,9 +44,9 @@ public partial class ApplicationDbContext : DbContext
             .UseCollation("utf8mb4_unicode_ci")
             .HasCharSet("utf8mb4");
 
-        modelBuilder.Entity<PracticeCountResponse>().HasNoKey();
+        //modelBuilder.Entity<PracticeCountResponse>().HasNoKey();
 
-        modelBuilder.Entity<PracticeCountResponse>().ToView(null);
+       // modelBuilder.Entity<PracticeCountResponse>().ToView(null);
 
         modelBuilder.Entity<Appointment>(entity =>
         {
@@ -815,6 +819,81 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.AppointmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_surgeryinfootherdetails_appointmentid");
+        });
+
+
+        modelBuilder.Entity<Episode>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("episodes");
+
+            entity.HasIndex(e => e.CaseTypeId, "fk_episode_casetype_idx");
+
+            entity.HasIndex(e => e.CaseTypeStateId, "fk_episode_casetypestate_idx");
+
+            entity.HasIndex(e => e.CaseManagementStatusId, "fk_episode_cmstatus_idx");
+
+            entity.HasIndex(e => e.IncidentTypeId, "fk_episode_incidenttype_idx");
+
+            entity.HasIndex(e => e.PatientId, "fk_episode_patient_idx");
+
+            entity.HasIndex(e => e.StatusId, "fk_episode_status_idx");
+
+            entity.HasIndex(e => e.CaseNumber, "fti_episode_casenumber").HasAnnotation("MySql:FullTextIndex", true);
+
+            entity.HasIndex(e => new { e.Id, e.IsActive }, "fti_episode_isactive");
+
+            entity.HasIndex(e => new { e.PatientId, e.CaseTypeId, e.CaseTypeStateId, e.CaseNumber, e.StatusId, e.IsActive, e.IncidentTypeId, e.IncidentDate }, "idx_episode_custom1");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("id");
+            entity.Property(e => e.CaseManagementStatusId).HasColumnName("casemanagementstatusid");
+            entity.Property(e => e.CaseMngtStatusComments)
+                .HasMaxLength(200)
+                .HasColumnName("casemngtstatuscomments");
+            entity.Property(e => e.CaseNumber)
+                .HasMaxLength(20)
+                .HasColumnName("casenumber");
+            entity.Property(e => e.CaseTypeId).HasColumnName("casetypeid");
+            entity.Property(e => e.CaseTypeStateId).HasColumnName("casetypestateid");
+            entity.Property(e => e.CreatedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("createdby");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("createddate");
+            entity.Property(e => e.ExternalBarcode)
+                .HasMaxLength(10)
+                .HasColumnName("externalbarcode");
+            entity.Property(e => e.ExternalPatientId)
+                .HasMaxLength(20)
+                .HasColumnName("externalpatientid");
+            entity.Property(e => e.IncidentDate).HasColumnName("incidentdate");
+            entity.Property(e => e.IncidentTypeId).HasColumnName("incidenttypeid");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+            entity.Property(e => e.PatientId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("patientid");
+            entity.Property(e => e.PrevDbId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("prevdbid");
+            entity.Property(e => e.StatusId).HasColumnName("statusid");
+            entity.Property(e => e.V1EpisodeId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("v1episodeid");
+            entity.Property(e => e.V2EpisodeId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("v2episodeid");
         });
 
 
