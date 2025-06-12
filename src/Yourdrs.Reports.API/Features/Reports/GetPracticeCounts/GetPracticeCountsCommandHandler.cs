@@ -1,6 +1,5 @@
 ﻿using Yourdrs.CrossCutting.CQRS;
 using Yourdrs.Reports.API.Extensions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Yourdrs.Reports.API.Features.Reports.GetPracticeCounts;
 
@@ -22,30 +21,16 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
             .Include(a => a.Location)
             .Where(a => a.IsActive == 1);
 
-        if (practiceIds != null)
-        {
-            query = query.Where(a => practiceIds.Contains((int)a.PracticeId));
-        }
 
-        if (locationIds != null)
-        {
-            query = query.Where(a => locationIds.Contains((int)a.LocationId));
-        }
+        query = query.Where(a => practiceIds.Contains((int)a.PracticeId));
 
-        if (appointmentTypeIds != null)
-        {
-            query = query.Where(a => appointmentTypeIds.Contains(a.AppointmentTypeId));
-        }
+        query = query.Where(a => locationIds.Contains((int)a.LocationId));
 
-        if (providerIds != null)
-        {
-            query = query.Where(a => providerIds.Contains((int)a.ProviderId));
-        }
+        query = query.Where(a => appointmentTypeIds.Contains(a.AppointmentTypeId));
 
-        if (statusIds != null)
-        {
-            query = query.Where(a => statusIds.Contains((int)a.StatusId));
-        }
+        query = query.Where(a => providerIds.Contains((int)a.ProviderId));
+
+        query = query.Where(a => statusIds.Contains((int)a.StatusId));
 
         if (command.AppointmentStartDate != null || command.AppointmentEndDate != null)
         {
@@ -84,22 +69,15 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
             }
         }
 
-        if (procedureIds != null || procedureTypeIds != null)
-        {
-            query = query
-                .Include(a => a.SurgeryInfoOtherDetails)
-                .Where(a => a.SurgeryInfoOtherDetails.Any(s => s.IsActive == 1));
 
-            if (procedureIds != null)
-            {
-                query = query.Where(a => a.SurgeryInfoOtherDetails.Any(s => procedureIds.Contains((int)s.ProcedureId)));
-            }
+        query = query
+            .Include(a => a.SurgeryInfoOtherDetails)
+            .Where(a => a.SurgeryInfoOtherDetails.Any(s => s.IsActive == 1));
 
-            if (procedureTypeIds != null)
-            {
-                query = query.Where(a => a.SurgeryInfoOtherDetails.Any(s => procedureTypeIds.Contains(s.ProcedureTypeId)));
-            }
-        }
+        query = query.Where(a => a.SurgeryInfoOtherDetails.Any(s => procedureIds.Contains((int)s.ProcedureId)));
+
+        query = query.Where(a => a.SurgeryInfoOtherDetails.Any(s => procedureTypeIds.Contains(s.ProcedureTypeId)));
+
 
         //if (patientAdvocateIds != null)
         //{
@@ -111,7 +89,8 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
 
 
         var results = query
-                 .GroupBy(a => new {
+                 .GroupBy(a => new
+                 {
                      a.PracticeId,
                      a.LocationId,
                      PracticeName = a.Practice!.PracticeName,
@@ -127,7 +106,6 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
 
         return results;
     }
-
 
     public void GetPracticeCount()
     {

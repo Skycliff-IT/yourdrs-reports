@@ -1,6 +1,6 @@
 ﻿namespace Yourdrs.Reports.API.Models;
 
-public partial class Location
+public class Location
 {
     public ushort Id { get; set; }
 

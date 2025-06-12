@@ -20,7 +20,7 @@ public record GetPracticeCountsCommand(
     int? ReferralSourcePracticeLocationId,
     int? ReferralSourcePatientId,
     int? LoginMemberId,
-    int? ARTypeId,
+    int? ArTypeId,
     byte? BillingTypeId,
     int? LegalRepId,
     DateTime? AppointmentStartDate,

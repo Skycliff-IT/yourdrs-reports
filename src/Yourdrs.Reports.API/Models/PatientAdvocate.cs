@@ -1,6 +1,6 @@
 ﻿namespace Yourdrs.Reports.API.Models;
 
-public partial class PatientAdvocate
+public class PatientAdvocate
 {
     public uint Id { get; set; }
 

@@ -17,7 +17,7 @@ public class GetPracticeCountsRequest
     public int? ReferralSourcePracticeLocationId { get; init; }
     public int? ReferralSourcePatientId { get; init; }
     public int? LoginMemberId { get; init; }
-    public int? ARTypeId { get; init; }
+    public int? ArTypeId { get; init; }
     public byte? BillingTypeId { get; init; }
     public int? LegalRepId { get; init; }
     public DateTime? AppointmentStartDate { get; init; }

@@ -2,7 +2,7 @@
 
 namespace Yourdrs.Reports.API.Features.Reports.GetPracticeCounts;
 
-public class GetPrcticeCountEndpoint : ICarterModule
+public class GetPracticeCountEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
@@ -17,10 +17,10 @@ public class GetPrcticeCountEndpoint : ICarterModule
 
                    return Results.Ok(result);
                })
-           .WithName("GetPrcticeCount")
-           .Produces<List<PracticeCountResponse>>(StatusCodes.Status200OK)
+           .WithName("GetPracticeCount")
+           .Produces<List<PracticeCountResponse>>()
            .ProducesProblem(StatusCodes.Status400BadRequest)
-           .WithSummary("Get prctice count")
-           .WithDescription("Get prctice count");
+           .WithSummary("Get practice count")
+           .WithDescription("Get practice count");
     }
 }
