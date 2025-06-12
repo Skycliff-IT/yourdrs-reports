@@ -18,7 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		k8s\service.yml = k8s\service.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B5B93DE0-5A24-473C-BF01-CBF9B658414D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yourdrs.API.Test", "..\Yourdrs.API.Test\Yourdrs.API.Test.csproj", "{97D47460-A2B7-42D5-B1C7-CF72EF3BF81E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F615FA33-CA68-423E-A9C9-AE16BAD48539}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{CE08C328-BF8C-2922-F512-A81898B68A8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE08C328-BF8C-2922-F512-A81898B68A8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE08C328-BF8C-2922-F512-A81898B68A8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97D47460-A2B7-42D5-B1C7-CF72EF3BF81E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97D47460-A2B7-42D5-B1C7-CF72EF3BF81E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97D47460-A2B7-42D5-B1C7-CF72EF3BF81E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97D47460-A2B7-42D5-B1C7-CF72EF3BF81E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +51,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A754214A-6109-422C-837A-630E032616CA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{CE08C328-BF8C-2922-F512-A81898B68A8F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{97D47460-A2B7-42D5-B1C7-CF72EF3BF81E} = {F615FA33-CA68-423E-A9C9-AE16BAD48539}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {47600B83-E994-4CF6-9AEF-23EA3BB6C72F}
