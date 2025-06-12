@@ -20,13 +20,13 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore Yourdrs.Reports.API.sln
+      run: dotnet restore src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj
 
     - name: Build
-      run: dotnet build Yourdrs.Reports.API.sln --configuration Release --no-restore
+      run: dotnet build src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test Yourdrs.Reports.API.sln --no-build --configuration Release --verbosity normal
+      run: dotnet test src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj --no-build --configuration Release --verbosity normal
 
     - name: Log in to GHCR
       uses: docker/login-action@v3
@@ -43,6 +43,6 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -f Yourdrs.Reports.API/Dockerfile -t ghcr.io/${OWNER_LC}/${REPO_LC}/va-api:latest .
+        docker build -f src/Yourdrs.Reports.API/Dockerfile -t ghcr.io/${OWNER_LC}/${REPO_LC}/va-api:latest .
         docker push ghcr.io/${OWNER_LC}/${REPO_LC}/va-api:latest
       working-directory: src
