@@ -16,96 +16,142 @@ public class GetPracticeCountsCommandHandler(ApplicationDbContext context) : ICo
         var procedureTypeIds = CsvHelper.ParseCsvToIntList(command.ProcedureTypeIds);
         var patientAdvocateIds = CsvHelper.ParseCsvToIntList(command.PatientAdvocateIds);
 
-        var query = context.Appointments
-            .Include(a => a.Practice)
-            .Include(a => a.Location)
-            .Where(a => a.IsActive == 1);
+        var baseQuery = from app in context.Appointments                         
+                        join aprc in context.Practices on new { Id = app.PracticeId, IsActive = (byte)1 } equals new { Id = (ushort?)aprc.Id, aprc.IsActive }   
+                        join aloc in context.Locations on new { Id = app.LocationId, IsActive = (byte)1 } equals new { Id = (ushort?)aloc.Id, aloc.IsActive }
+                        where app.IsActive == 1
+                        select new { app, aprc, aloc };
 
+        IQueryable<AppointmentJoinDto> query = baseQuery
+             .Select(q => new AppointmentJoinDto
+             {
+                 app = q.app,
+                 aprc = q.aprc,
+                 aloc = q.aloc,
+                 clm = null,
+                 pay = null,
+                 chk = null,
+                 surg = null
+             });
 
-        query = query.Where(a => practiceIds.Contains((int)a.PracticeId));
-
-        query = query.Where(a => locationIds.Contains((int)a.LocationId));
-
-        query = query.Where(a => appointmentTypeIds.Contains(a.AppointmentTypeId));
-
-        query = query.Where(a => providerIds.Contains((int)a.ProviderId));
-
-        query = query.Where(a => statusIds.Contains((int)a.StatusId));
-
-        if (command.AppointmentStartDate != null || command.AppointmentEndDate != null)
+        if (command.BillingTypeId.HasValue || command.PostedStartDate.HasValue || command.PostedEndDate.HasValue)
         {
-            var startDate = command.AppointmentStartDate ?? DateTime.MinValue;
-            var endDate = command.AppointmentEndDate ?? DateTime.MaxValue;
+            query = from q in query
+                    join clmRaw in context.RcmClaims on new {Id = q.app.Id, IsActive = (byte?)1 } equals new {Id = clmRaw.AppointmentId , clmRaw.IsActive } into clmJoin
+                    from clm in clmJoin.DefaultIfEmpty()
 
-            query = query.Where(a => a.StartDateTime.Date >= startDate.Date &&
-                                   a.StartDateTime.Date <= endDate.Date);
+                    select new AppointmentJoinDto
+                    {
+                        app = q.app,
+                        aprc = q.aprc,
+                        aloc = q.aloc,
+                        clm = clm,
+                        pay = q.pay,
+                        chk = q.chk,
+                        surg = q.surg
+                    };
         }
 
-        if (command.BillingTypeId != null || command.PostedStartDate != null || command.PostedEndDate != null)
+        if (command.PostedStartDate.HasValue || command.PostedEndDate.HasValue)
         {
-            query = query
-                .Include(a => a.RcmClaims)
-                    .ThenInclude(c => c.RcmPayments)
-                        .ThenInclude(p => p.CheckDetails)
-                .Where(a => a.RcmClaims.Any(c => c.IsActive == 1));
-
-            if (command.BillingTypeId != null)
-            {
-                query = query.Where(a => a.RcmClaims.Any(c => c.BillingTypeId == command.BillingTypeId));
-            }
-
-            var sql = query.ToQueryString();
-
-            if (command.PostedStartDate != null || command.PostedEndDate != null)
-            {
-                var postedStart = command.PostedStartDate ?? DateTime.MinValue;
-                var postedEnd = command.PostedEndDate ?? DateTime.MaxValue;
-
-                query = query.Where(a => a.RcmClaims.Any(c =>
-                    c.RcmPayments.Any(p =>
-                        p.CheckDetails != null &&
-                        p.CheckDetails.PostedDate >= postedStart.Date &&
-                        p.CheckDetails.PostedDate <= postedEnd.Date)));
-            }
+            query = from q in query
+                    join payRaw in context.RcmPayments on new { Id = q.clm.Id , IsActive = (byte)1 } equals new { Id =(uint)(payRaw.ClaimId ?? 0), payRaw.IsActive }  into payJoin
+                    from pay in payJoin.DefaultIfEmpty()
+                    join chkRaw in context.RcmCheckDetails on new { Id = pay.CheckDetailsId, IsActive = (byte)1 } equals new { Id = (uint?)chkRaw.Id, chkRaw.IsActive } into chkJoin
+                    from chk in chkJoin.DefaultIfEmpty()
+                    select new AppointmentJoinDto
+                    {
+                        app = q.app,
+                        aprc = q.aprc,
+                        aloc = q.aloc,
+                        clm = q.clm,
+                        pay = pay,
+                        chk = chk,
+                        surg = q.surg
+                    };
         }
 
+        if ((procedureIds != null && procedureIds.Any()) || (procedureTypeIds != null && procedureTypeIds.Any()))
+        {
+            query = from q in query
+                    join surgRaw in context.SurgeryInfoOtherDetails on new {Id = q.app.Id, IsActive = (byte)1 } equals new { Id = surgRaw.AppointmentId, surgRaw.IsActive}  into surgJoin
+                    from surg in surgJoin.DefaultIfEmpty()
+                    select new AppointmentJoinDto
+                    {
+                        app = q.app,
+                        aprc = q.aprc,
+                        aloc = q.aloc,
+                        clm = q.clm,
+                        pay = q.pay,
+                        chk = q.chk,
+                        surg = surg
+                    };
+        }
 
-        query = query
-            .Include(a => a.SurgeryInfoOtherDetails)
-            .Where(a => a.SurgeryInfoOtherDetails.Any(s => s.IsActive == 1));
+        if (practiceIds != null && practiceIds.Any())
+            query = query.Where(x => practiceIds.Contains((int)x.app.PracticeId));
 
-        query = query.Where(a => a.SurgeryInfoOtherDetails.Any(s => procedureIds.Contains((int)s.ProcedureId)));
+        if (locationIds != null && locationIds.Any())
+            query = query.Where(x => locationIds.Contains((int)x.app.LocationId));
 
-        query = query.Where(a => a.SurgeryInfoOtherDetails.Any(s => procedureTypeIds.Contains(s.ProcedureTypeId)));
+        if (providerIds != null && providerIds.Any())
+            query = query.Where(x => providerIds.Contains((int)x.app.ProviderId));
 
+        if (appointmentTypeIds != null && appointmentTypeIds.Any())
+            query = query.Where(x => appointmentTypeIds.Contains((int)x.app.AppointmentTypeId));
 
-        //if (patientAdvocateIds != null)
-        //{
-        //    query = query
-        //        .Include(a => a.Episode)
-        //            .ThenInclude(e => e.PatientAdvocates)
-        //        .Where(a => a.Episode.PatientAdvocates.Any(pa => patientAdvocateIds.Contains(pa.MemberId)));
-        //}
+        if (statusIds != null && statusIds.Any())
+            query = query.Where(x => statusIds.Contains((int)x.app.StatusId));
 
+        if (procedureIds != null && procedureIds.Any())
+            query = query.Where(x => procedureIds.Contains((int)x.surg.ProcedureId));
 
-        var results = query
-                 .GroupBy(a => new
-                 {
-                     a.PracticeId,
-                     a.LocationId,
-                     PracticeName = a.Practice!.PracticeName,
-                     LocationName = a.Location!.LocationName
-                 })
-                 .OrderByDescending(g => g.Count())
-                 .Select(g => new PracticeCountResponse(
-                     g.Key.PracticeName,
-                     g.Key.LocationName,
-                     g.Count()
-                 ))
-                 .ToList();
+        if (procedureTypeIds != null && procedureTypeIds.Any())
+            query = query.Where(x => procedureTypeIds.Contains((int)x.surg.ProcedureTypeId));
 
-        return results;
+        if (command.BillingTypeId.HasValue)
+            query = query.Where(x => x.clm != null && x.clm.BillingTypeId == command.BillingTypeId);
+
+        if (command.AppointmentStartDate.HasValue && command.AppointmentEndDate.HasValue)
+        {
+            query = query.Where(x => x.app.StartDateTime >= command.AppointmentStartDate &&
+                                     x.app.StartDateTime <= command.AppointmentEndDate);
+        }
+        else if (command.AppointmentStartDate.HasValue)
+        {
+            query = query.Where(x => x.app.StartDateTime >= command.AppointmentStartDate);
+        }
+        else if (command.AppointmentEndDate.HasValue)
+        {
+            query = query.Where(x => x.app.StartDateTime <= command.AppointmentEndDate);
+        }
+
+        if (command.PostedStartDate.HasValue && command.PostedEndDate.HasValue)
+        {
+            query = query.Where(x => x.chk.PostedDate >= command.AppointmentStartDate &&
+                                    x.chk.PostedDate <= command.AppointmentEndDate);
+        }
+        else if (command.PostedStartDate.HasValue)
+        {
+            query = query.Where(x => x.chk.PostedDate >= command.AppointmentStartDate);
+        }
+        else if (command.PostedEndDate.HasValue)
+        {
+            query = query.Where(x => x.chk.PostedDate <= command.AppointmentEndDate);
+        }
+
+        var result = await query
+             .GroupBy(x => new { x.aprc.PracticeName, x.aloc.LocationName })
+             .Select(g => new PracticeCountResponse(
+                 g.Key.PracticeName,
+                 g.Key.LocationName,
+                 g.Select(x => x.app.Id).Distinct().Count()
+             ))
+             .ToListAsync();
+
+        return result.OrderBy(x => x.AppointmentCount).ToList();
     }
+
 
     public void GetPracticeCount()
     {

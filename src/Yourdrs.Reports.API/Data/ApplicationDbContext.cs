@@ -1,4 +1,6 @@
-﻿namespace Yourdrs.Reports.API.Data;
+﻿using Yourdrs.Reports.API.Features.Reports.GetPracticeCounts;
+
+namespace Yourdrs.Reports.API.Data;
 
 public partial class ApplicationDbContext : DbContext
 {
@@ -11,6 +13,7 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
+    public DbSet<PracticeCountResponse> PracticeCountResponses { get; set; }
     public virtual DbSet<Customer> Customers { get; set; }
     public virtual DbSet<Appointment> Appointments { get; set; }
 
@@ -36,6 +39,10 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder
             .UseCollation("utf8mb4_unicode_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<PracticeCountResponse>().HasNoKey();
+
+        modelBuilder.Entity<PracticeCountResponse>().ToView(null);
 
         modelBuilder.Entity<Appointment>(entity =>
         {
