@@ -23,21 +23,21 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj  # Update path if necessary
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -o publish
+        run: dotnet publish src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj -c Release -o publish
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v2
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{ env.AWS_REGION }}
 
-      - name: Upload to S3
-        run: |
-          aws s3 sync ./publish s3://your-bucket-name/path-to-deploy/ --delete
+      # - name: Upload to S3
+      #   run: |
+      #     aws s3 sync ./publish s3://your-bucket-name/path-to-deploy/ --delete
