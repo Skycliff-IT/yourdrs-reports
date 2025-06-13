@@ -1,8 +1,6 @@
 ﻿using Yourdrs.CrossCutting.CQRS;
 
 namespace Yourdrs.Reports.API.Features.Reports.GetOfficeAppointmentCounts;
-
-public record OfficeAppointmentCountResponse(int Grp,string GrpName,string TypeIds,int Cnt,int Hcnt);
 public record GetOfficeAppointmentCountsCommand(
     string PracticeIds,
     string? LocationIds,
@@ -11,11 +9,11 @@ public record GetOfficeAppointmentCountsCommand(
     string? StatusIds,
     string? ProcedureIds,
     string? ProcedureTypeIds,
-    int? ARTypeId,
+    int? ArTypeId,
     byte? BillingTypeId,
-    DateTime? AppointmentStartDate,
-    DateTime? AppointmentEndDate,
+    DateTime AppointmentStartDate,
+    DateTime AppointmentEndDate,
     DateTime? PostedStartDate,
     DateTime? PostedEndDate,
     int? TimeZoneOffset,
-    string? SurgeryDateOp) : ICommand<List<OfficeAppointmentCountResponse>>;
+    int? SurgeryDateOp) : ICommand<List<OfficeAppointmentCountDto>>;

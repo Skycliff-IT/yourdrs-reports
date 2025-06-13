@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Yourdrs.Reports.API.Models;
 
-public partial class Appointmenttype
+public partial class AppointmentType
 {
     public byte Id { get; set; }
 

@@ -1,41 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Yourdrs.Reports.API.Models;
 
-namespace Yourdrs.Reports.API.Models;
-
-public partial class Partnermember
+public partial class PartnerMember
 {
     public ushort Id { get; set; }
 
-    public string Firstname { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
 
-    public string? Middlename { get; set; }
+    public string? MiddleName { get; set; }
 
-    public string? Lastname { get; set; }
+    public string? LastName { get; set; }
 
-    public byte? Suffixid { get; set; }
+    public byte? SuffixId { get; set; }
 
-    public byte? Prefixid { get; set; }
+    public byte? PrefixId { get; set; }
 
-    public byte? Isarbitrationattorney { get; set; }
+    public byte? IsArbitrationAttorney { get; set; }
 
-    public byte? Islitigationattorney { get; set; }
+    public byte? IsLitigationAttorney { get; set; }
 
-    public byte? Roleid { get; set; }
+    public byte? RoleId { get; set; }
 
-    public uint? Memberid { get; set; }
+    public uint? MemberId { get; set; }
 
-    public ushort? Practiceid { get; set; }
+    public ushort? PracticeId { get; set; }
 
-    public ushort? Locationid { get; set; }
+    public ushort? LocationId { get; set; }
 
-    public sbyte Isdefaultmember { get; set; }
+    public sbyte IsDefaultMember { get; set; }
 
-    public byte Isactive { get; set; }
+    public byte IsActive { get; set; }
 
-    public uint Modifiedby { get; set; }
+    public uint ModifiedBy { get; set; }
 
-    public DateTime Modifieddate { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-    public virtual ICollection<Partnerorganizationmember> Partnerorganizationmembers { get; set; } = new List<Partnerorganizationmember>();
+    public virtual ICollection<PartnerOrganizationMember> PartnerOrganizationMembers { get; set; } = new List<PartnerOrganizationMember>();
 }

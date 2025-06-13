@@ -1,17 +1,11 @@
 ﻿namespace Yourdrs.Reports.API.Features.Reports.GetOfficeAppointmentCounts;
 
+[Keyless]
 public class OfficeAppointmentCountDto
 {
-    public Appointment app { get; set; }
-    public Location aloc { get; set; }
-    public RcmClaim clm { get; set; }
-    public RcmPayment pay { get; set; }
-    public RcmCheckDetail chk { get; set; }
-    public SurgeryInfoOtherDetail surg { get; set; }
-    //public PartnerOrganization pom { get; set; } 
-    //public PartnerOrgLocationMapping pol { get; set; }
-    //public PartnerOrganization porg { get; set; }  
-    //public EpisodeLegalRepresentative elr { get; set; }
-    
+    public int Grp { get; set; }
+    public string GrpName { get; set; }
+    public string TypeIds { get; set; }
+    public int Cnt { get; set; }
+    public int Hcnt { get; set; }
 }
-

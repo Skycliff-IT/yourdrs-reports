@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Yourdrs.Reports.API.Models;
 
-namespace Yourdrs.Reports.API.Models;
-
-public partial class Partnerorganization
+public partial class PartnerOrganization
 {
     public ushort Id { get; set; }
 
-    public string Partnerorganizationname { get; set; } = null!;
+    public string PartnerOrganizationName { get; set; } = null!;
 
-    public byte? Organizationtypeid { get; set; }
+    public byte? OrganizationTypeId { get; set; }
 
-    public ushort? Practiceid { get; set; }
+    public ushort? PracticeId { get; set; }
 
     public string? Comments { get; set; }
 
-    public byte Isactive { get; set; }
+    public byte IsActive { get; set; }
 
-    public uint Modifiedby { get; set; }
+    public uint ModifiedBy { get; set; }
 
-    public DateTime Modifieddate { get; set; }
+    public DateTime ModifiedDate { get; set; }
 
-    public virtual ICollection<Partnerorglocationmapping> Partnerorglocationmappings { get; set; } = new List<Partnerorglocationmapping>();
+    public virtual ICollection<PartnerOrgLocationMapping> PartnerOrgLocationMappings { get; set; } = new List<PartnerOrgLocationMapping>();
 }

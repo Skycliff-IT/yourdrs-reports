@@ -1,177 +1,111 @@
-﻿//using Yourdrs.CrossCutting.CQRS;
-//using Yourdrs.Reports.API.Extensions;
+﻿using MySqlConnector;
+using Yourdrs.CrossCutting.CQRS;
 
-//namespace Yourdrs.Reports.API.Features.Reports.GetOfficeAppointmentCounts
-//{
-//    public class GetOfficeAppointmentCountsCommandHandler : ICommandHandler<GetOfficeAppointmentCountsRequest, List<OfficeAppointmentCountDto>>
-//    {
-//        private readonly ApplicationDbContext _context;
+namespace Yourdrs.Reports.API.Features.Reports.GetOfficeAppointmentCounts
+{
+    public class GetOfficeAppointmentCountsCommandHandler : ICommandHandler<GetOfficeAppointmentCountsCommand, List<OfficeAppointmentCountDto>>
+    {
+        private readonly ApplicationDbContext _context;
 
-//        public GetOfficeAppointmentCountsCommandHandler(ApplicationDbContext context)
-//        {
-//            _context = context;
-//        }
+        public GetOfficeAppointmentCountsCommandHandler(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-//        public async Task<List<OfficeAppointmentCountDto>> Handle(GetOfficeAppointmentCountsRequest request, CancellationToken cancellationToken = default)
-//        {
-//            // Parse the CSV strings into integer lists
-//            var practiceIds = CsvHelper.ParseCsvToIntList(request.PracticeIds);
-//            var locationIds = CsvHelper.ParseCsvToIntList(request.LocationIds);
-//            var providerIds = CsvHelper.ParseCsvToIntList(request.ProviderIds);
-//            var appointmentTypeIds = CsvHelper.ParseCsvToIntList(request.AppointmentTypeIds);
-//            var statusIds = CsvHelper.ParseCsvToIntList(request.StatusIds);
-//            var procedureIds = CsvHelper.ParseCsvToIntList(request.ProcedureIds);
-//            var procedureTypeIds = CsvHelper.ParseCsvToIntList(request.ProcedureTypeIds);
+        public async Task<List<OfficeAppointmentCountDto>> Handle(GetOfficeAppointmentCountsCommand request, CancellationToken cancellationToken = default)
+        {
+            var hStartDate = request.AppointmentStartDate.AddYears(-1);
+            var hEndDate = request.AppointmentEndDate.AddYears(-1);
 
-//            // Define the base query for appointments, joining appointmenttypes, legalrepresentatives, and other related entities
-//            var baseQuery = from app in _context.Appointments
-//                            //join aty in _context.AppointmentTypes on app.AppointmentTypeId equals aty.Id into atyJoin
-//                            //from aty in atyJoin.DefaultIfEmpty()  // Joining appointment types
-//                            //join elr in _context.EpisodeLegalRepresentatives on app.EpisodeId equals elr.EpisodeId into elrJoin
-//                            //from elr in elrJoin.DefaultIfEmpty()  // Joining legal representatives
-//                            //join pom in _context.PartnerOrganizationMembers on elr.PartnerOrganizationMemberId equals pom.Id into pomJoin
-//                            //from pom in pomJoin.DefaultIfEmpty()  // Joining partner organization members
-//                            //join pol in _context.PartnerOrgLocationMapping on pom.PartnerOrgLocationMappingId equals pol.Id into polJoin
-//                            //from pol in polJoin.DefaultIfEmpty()  // Joining partner org location mapping
-//                            //join porg in _context.PartnerOrganizations on pol.PartnerOrganizationId equals porg.Id into porgJoin
-//                            //from porg in porgJoin.DefaultIfEmpty()  // Joining partner organizations
-//                            where app.IsActive == 1
-//                            select new { app, 
-//                                 };
-//            //aty, elr, pom, pol, porg
-//            IQueryable<OfficeAppointmentCountDto> query = baseQuery
-//                .Select(q => new OfficeAppointmentCountDto
-//                {
-//                    app = q.app,
-//                    //aloc = q.pol,  // Assuming PartnerOrgLocationMapping represents location
-//                    //clm = null,  // Initialize as null; will join later if needed
-//                    //pay = null,  // Initialize as null; will join later if needed
-//                    //chk = null,  // Initialize as null; will join later if needed
-//                    //surg = null,  // Initialize as null; will join later if needed
-//                    //pom = q.pom,  // Partner organization member details
-//                    //pol = q.pol,  // Partner org location mapping details
-//                    //porg = q.porg,  // Partner organization details
-//                    //elr = q.elr,  // Episode legal representative details
-//                    //GroupName = q.aty.Name,  // Group name from appointment types
-//                    //GroupDescription = q.aty.Description,  // Description from appointment types
-//                    //LegalRepresentative = q.elr != null ? $"{q.elr.FirstName} {q.elr.LastName}" : "N/A",  // Legal representative name
-//                    //OrganizationName = q.porg?.PartnerOrganizationName,  // Organization name
-//                    //AppointmentTypeIds = string.Join(",", new[] { q.aty.Id.ToString() }),  // Appointment type IDs
-//                    //AppointmentCount = 0,  // This will be calculated later
-//                    //PreviousYearAppointmentCount = 0  // This will be calculated later
-//                });
+            var sqlQuery = @"
+                            WITH apptype AS (
+                                SELECT 1 AS grp, 'Office Visits' AS grpname, aty.id AS appttypid 
+                                FROM appointmenttypes aty 
+                                WHERE aty.id IN (1, 4, 5, 17, 18, 19, 22, 23, 26, 28, 29, 30, 31, 34, 35, 36, 37, 38, 39, 41, 46, 47, 49, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73)
+                                UNION ALL
+                                SELECT 2, 'IE / Consultation', id FROM appointmenttypes WHERE id IN (6, 32)
+                                UNION ALL
+                                SELECT 3, 'PT', id FROM appointmenttypes WHERE id IN (9, 11, 33)
+                                UNION ALL
+                                SELECT 4, 'EMG / NCV', id FROM appointmenttypes WHERE id IN (13, 14, 15, 16, 42, 43, 44, 45, 50)
+                                UNION ALL
+                                SELECT 5, 'In office procedure', id FROM appointmenttypes WHERE id IN (10, 25)
+                                UNION ALL
+                                SELECT 6, 'Diagnostic', id FROM appointmenttypes WHERE id IN (20, 21, 27)
+                                UNION ALL
+                                SELECT 7, 'Post Op Visit', id FROM appointmenttypes WHERE id IN (24)
+                            ),
+                            legalrep AS (
+                                SELECT elr.episodeid, porg.partnerorganizationname, pm.firstname, pm.lastname,
+                                       ROW_NUMBER() OVER (PARTITION BY elr.episodeid ORDER BY elr.episodeid, elr.createddate DESC) AS rownum
+                                FROM episodelegalrepresentatives elr 
+                                INNER JOIN partnerorganizationmembers pom ON pom.id = elr.partnerorganizationmemberid
+                                INNER JOIN partnermembers pm ON pm.id = pom.partnermemberid
+                                INNER JOIN partnerorglocationmapping pol ON pol.id = pom.partnerorglocationmappingid
+                                INNER JOIN partnerorganizations porg ON porg.id = pol.partnerorganizationid
+                                WHERE elr.isactive = 1
+                            ),
+                            legalrepdist AS (
+                                SELECT * FROM legalrep WHERE rownum = 1
+                            )
+                            SELECT aty.grp, aty.grpname, GROUP_CONCAT(DISTINCT aty.appttypid) AS typeids,
+                                COUNT(DISTINCT CASE 
+                                    WHEN (@_SurgeryDateOp = 1 OR @_SurgeryDateOp = 3) AND DATE(app.startdatetime) BETWEEN @_Appointmentstartdate AND @_Appointmentenddate THEN app.id
+                                    WHEN @_SurgeryDateOp = 2 AND DATE(app.createddate) BETWEEN @_Appointmentstartdate AND @_Appointmentenddate THEN app.id
+                                END) AS cnt,
+                                COUNT(DISTINCT CASE 
+                                    WHEN (@_SurgeryDateOp = 1 OR @_SurgeryDateOp = 3) AND DATE(app.startdatetime) BETWEEN @_HAppointmentstartdate AND @_HAppointmentenddate THEN app.id
+                                    WHEN @_SurgeryDateOp = 2 AND DATE(app.createddate) BETWEEN @_HAppointmentstartdate AND @_HAppointmentenddate THEN app.id
+                                END) AS Hcnt
+                            FROM appointments app
+                            INNER JOIN apptype aty ON app.appointmenttypeid = aty.appttypid
+                            INNER JOIN episodes e ON e.id = app.episodeid AND e.isactive = 1
+                            LEFT JOIN rcmclaim clm ON clm.appointmentid = app.id AND clm.isactive = 1
 
-//            // Join RcmClaims if BillingTypeId or PostedDate is passed
-//            if (request.BillingTypeId != null || request.PostedStartDate.HasValue || request.PostedEndDate.HasValue)
-//            {
-//                query = from q in query
-//                        join clmRaw in _context.RcmClaims on q.app.Id equals clmRaw.AppointmentId into clmJoin
-//                        from clm in clmJoin.DefaultIfEmpty()
-//                        select new OfficeAppointmentCountDto
-//                        {
-//                            app = q.app,
-//                            aloc = q.aloc,
-//                            clm = clm,
-//                            pay = q.pay,
-//                            chk = q.chk,
-//                            surg = q.surg,
-//                            //pom = q.pom,
-//                            //pol = q.pol,
-//                            //porg = q.porg,
-//                            //elr = q.elr,
-//                            //GroupName = q.GroupName,
-//                            //GroupDescription = q.GroupDescription,
-//                            //LegalRepresentative = q.LegalRepresentative,
-//                            //OrganizationName = q.OrganizationName,
-//                            //AppointmentTypeIds = q.AppointmentTypeIds,
-//                            //AppointmentCount = q.AppointmentCount,
-//                            //PreviousYearAppointmentCount = q.PreviousYearAppointmentCount
-//                        };
-//            }
+                            LEFT JOIN rcmpayments pay ON pay.claimid = clm.id AND pay.isactive = 1
+                            LEFT JOIN rcmcheckdetails chk ON chk.id = pay.checkdetailsid AND chk.isactive = 1
+                            WHERE app.statusid NOT IN (5)
+                              AND FIND_IN_SET(app.practiceid, @_PracticeIds) > 0
+                              AND (
+                                  @_PostedStartDate IS NULL AND @_PostedEndDate IS NULL
+                                  OR (@_PostedStartDate IS NOT NULL AND @_PostedEndDate IS NULL AND DATE(chk.posteddate) >= @_PostedStartDate)
+                                  OR (@_PostedStartDate IS NULL AND @_PostedEndDate IS NOT NULL AND DATE(chk.posteddate) <= @_PostedEndDate)
+                                  OR (DATE(chk.posteddate) BETWEEN @_PostedStartDate AND @_PostedEndDate)
+                              )
+                              AND (
+                                  @_ARTypeId IS NULL 
+                                  OR (@_ARTypeId = 1 AND app.appointmenttypeid = 7) 
+                                  OR (@_ARTypeId = 2 AND app.appointmenttypeid != 7)
+                              )
+                              AND (
+                                  (@_SurgeryDateOp = 1 AND DATE(app.startdatetime) BETWEEN @_HAppointmentstartdate AND @_Appointmentenddate)
+                                  OR (@_SurgeryDateOp = 2 AND DATE(DATE_ADD(app.createddate, INTERVAL (-1 * @_TimeZoneOffset) MINUTE)) BETWEEN @_HAppointmentstartdate AND @_Appointmentenddate)
+                                  OR (@_SurgeryDateOp = 3 AND DATE(app.startdatetime) BETWEEN @_HAppointmentstartdate AND @_Appointmentenddate AND app.isrescheduled = 1)
+                              )
+                            GROUP BY aty.grp;";
 
-//            // Join Payments and Surgery Info if applicable
-//            if ((procedureIds != null && procedureIds.Any()) || (procedureTypeIds != null && procedureTypeIds.Any()))
-//            {
-//                query = from q in query
-//                        join surgRaw in _context.SurgeryInfoOtherDetails on q.app.Id equals surgRaw.AppointmentId into surgJoin
-//                        from surg in surgJoin.DefaultIfEmpty()
-//                        select new OfficeAppointmentCountDto
-//                        {
-//                            app = q.app,
-//                            aloc = q.aloc,
-//                            clm = q.clm,
-//                            pay = q.pay,
-//                            chk = q.chk,
-//                            surg = surg,
-//                            //pom = q.pom,
-//                            //pol = q.pol,
-//                            //porg = q.porg,
-//                            //elr = q.elr,
-//                            //GroupName = q.GroupName,
-//                            //GroupDescription = q.GroupDescription,
-//                            //LegalRepresentative = q.LegalRepresentative,
-//                            //OrganizationName = q.OrganizationName,
-//                            //AppointmentTypeIds = q.AppointmentTypeIds,
-//                            //AppointmentCount = q.AppointmentCount,
-//                            //PreviousYearAppointmentCount = q.PreviousYearAppointmentCount
-//                        };
-//            }
-
-//            // Apply filters based on command parameters
-//            //if (practiceIds != null && practiceIds.Any())
-//            //    query = query.Where(x => practiceIds.Contains(x.app.PracticeId));
-
-//            //if (locationIds != null && locationIds.Any())
-//            //    query = query.Where(x => locationIds.Contains(x.app.LocationId));
-
-//            //if (providerIds != null && providerIds.Any())
-//            //    query = query.Where(x => providerIds.Contains(x.app.ProviderId));
-
-//            //if (appointmentTypeIds != null && appointmentTypeIds.Any())
-//            //    query = query.Where(x => appointmentTypeIds.Contains(x.app.AppointmentTypeId));
-
-//            //if (statusIds != null && statusIds.Any())
-//            //    query = query.Where(x => statusIds.Contains(x.app.StatusId));
-
-//            //if (procedureIds != null && procedureIds.Any())
-//            //    query = query.Where(x => procedureIds.Contains(x.surg.ProcedureId));
-
-//            if (procedureTypeIds != null && procedureTypeIds.Any())
-//                query = query.Where(x => procedureTypeIds.Contains(x.surg.ProcedureTypeId));
-
-//            // Handle appointment date filters
-//            if (request.AppointmentStartDate.HasValue && request.AppointmentEndDate.HasValue)
-//            {
-//                query = query.Where(x => x.app.StartDateTime >= request.AppointmentStartDate &&
-//                                         x.app.StartDateTime <= request.AppointmentEndDate);
-//            }
-//            else if (request.AppointmentStartDate.HasValue)
-//            {
-//                query = query.Where(x => x.app.StartDateTime >= request.AppointmentStartDate);
-//            }
-//            else if (request.AppointmentEndDate.HasValue)
-//            {
-//                query = query.Where(x => x.app.StartDateTime <= request.AppointmentEndDate);
-//            }
-
-//            // Calculate previous year counts by adjusting the dates
-//            var previousYearStart = request.AppointmentStartDate?.AddYears(-1);
-//            var previousYearEnd = request.AppointmentEndDate?.AddYears(-1);
+                    var parameters = new[]
+                    {
+                        new MySqlParameter("@_PracticeIds", request.PracticeIds),
+                        new MySqlParameter("@_PostedStartDate", request.PostedStartDate ?? (object)DBNull.Value),
+                        new MySqlParameter("@_PostedEndDate", request.PostedEndDate ?? (object)DBNull.Value),
+                        new MySqlParameter("@_ARTypeId", request.ArTypeId ?? (object)DBNull.Value),
+                        new MySqlParameter("@_SurgeryDateOp", request.SurgeryDateOp ?? (object)DBNull.Value),
+                        new MySqlParameter("@_TimeZoneOffset", request.TimeZoneOffset ?? 0),
+                        new MySqlParameter("@_Appointmentstartdate", request.AppointmentStartDate),
+                        new MySqlParameter("@_Appointmentenddate", request.AppointmentEndDate),
+                        new MySqlParameter("@_HAppointmentstartdate", hStartDate),
+                        new MySqlParameter("@_HAppointmentenddate", hEndDate),
 
 
-//            // Group by practice and location, and count the appointments
-//            //var result = await query
-//            //    .GroupBy(x => new { x.app.PracticeId, x.app.LocationId })
-//            //    .Select(g => new OfficeAppointmentCountResponse
-//            //    {
-//            //        Grp = g.First().PracticeId,
-//            //        GrpName = g.First().GroupDescription,
-//            //        TypeIds = string.Join(",", g.Select(x => x.AppointmentTypeIds).Distinct()),
-//            //        Cnt = g.Select(x => x.app.Id).Distinct().Count()  // Adjust for previous year logic
-//            //    })
-//            //    .ToListAsync();
+                    };
 
-//            //return result.OrderBy(x => x.AppointmentCount).ToList();
-//        }
-//    }
-//}
+                    var result = await _context
+                        .Set<OfficeAppointmentCountDto>()
+                        .FromSqlRaw(sqlQuery, parameters)
+                        .ToListAsync(cancellationToken);
+
+                    return result;
+        }
+    }
+}
