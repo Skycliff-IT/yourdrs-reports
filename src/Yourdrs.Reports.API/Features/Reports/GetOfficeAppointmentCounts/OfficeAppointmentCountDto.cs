@@ -1,6 +1,5 @@
 ﻿namespace Yourdrs.Reports.API.Features.Reports.GetOfficeAppointmentCounts;
 
-[Keyless]
 public class OfficeAppointmentCountDto
 {
     public int Grp { get; set; }
