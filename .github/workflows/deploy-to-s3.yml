@@ -31,13 +31,13 @@ jobs:
       - name: Publish
         run: dotnet publish src/Yourdrs.Reports.API/Yourdrs.Reports.API.csproj -c Release -o publish
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v2
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      # - name: Upload to S3
-      #   run: |
-      #     aws s3 sync ./publish s3://your-bucket-name/path-to-deploy/ --delete
+      - name: Upload to S3
+        run: |
+          aws s3 sync ./publish s3://yd-v2-helpdocs/api-deploy/ --delete
