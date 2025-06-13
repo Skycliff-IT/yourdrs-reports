@@ -1,4 +1,5 @@
-﻿using Yourdrs.Reports.API.Features.Reports.GetPracticeCounts;
+﻿using Yourdrs.Reports.API.Features.Reports.GetOfficeAppointmentCounts;
+using Yourdrs.Reports.API.Features.Reports.GetPracticeCounts;
 
 namespace Yourdrs.Reports.API.Data;
 
@@ -14,6 +15,7 @@ public partial class ApplicationDbContext : DbContext
     }
 
     //public DbSet<PracticeCountResponse> PracticeCountResponses { get; set; }
+    public DbSet<OfficeAppointmentCountDto> OfficeAppointmentCounts { get; set; } // Optional if using Set<T>()
 
     public virtual DbSet<Customer> Customers { get; set; }
 
@@ -33,6 +35,18 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<SurgeryInfoOtherDetail> SurgeryInfoOtherDetails { get; set; }
 
+    public virtual DbSet<AppointmentType> AppointmentTypes { get; set; }
+
+    public virtual DbSet<EpisodeLegalRepresentative> EpisodeLegalRepresentatives { get; set; }
+
+    public virtual DbSet<PartnerMember> PartnerMembers { get; set; }
+
+    public virtual DbSet<PartnerOrganization> PartnerOrganizations { get; set; }
+
+    public virtual DbSet<PartnerOrganizationMember> PartnerOrganizationMembers { get; set; }
+
+    public virtual DbSet<PartnerOrgLocationMapping> PartnerOrgLocationMappings { get; set; }
+
     public virtual DbSet<Episode> Episodes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -46,7 +60,9 @@ public partial class ApplicationDbContext : DbContext
 
         //modelBuilder.Entity<PracticeCountResponse>().HasNoKey();
 
-       // modelBuilder.Entity<PracticeCountResponse>().ToView(null);
+        // modelBuilder.Entity<PracticeCountResponse>().ToView(null);
+
+        modelBuilder.Entity<OfficeAppointmentCountDto>().HasNoKey();
 
         modelBuilder.Entity<Appointment>(entity =>
         {
@@ -820,7 +836,237 @@ public partial class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_surgeryinfootherdetails_appointmentid");
         });
+        modelBuilder.Entity<AppointmentType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
+            entity.ToTable("appointmenttypes");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("id");
+            entity.Property(e => e.AppointmentTypeName)
+                .HasMaxLength(50)
+                .HasColumnName("appointmenttypename");
+            entity.Property(e => e.AppointmentTypeShortName)
+                .HasMaxLength(50)
+                .HasColumnName("appointmenttypeshortname");
+            entity.Property(e => e.DurationInMinutes)
+                .HasDefaultValueSql("'15'")
+                .HasColumnName("durationinminutes");
+            entity.Property(e => e.GroupId).HasColumnName("groupid");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.ModifieBby)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+        });
+
+        modelBuilder.Entity<EpisodeLegalRepresentative>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("episodelegalrepresentatives");
+
+            entity.HasIndex(e => e.EpisodeId, "fk_episodelegalrepresentatives_epid_idx");
+
+            entity.HasIndex(e => e.PartnerOrganizationMemberId, "fk_episodelegalrepresentatives_pomid_idx");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("id");
+            entity.Property(e => e.CreateBby)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("createdby");
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("createddate");
+            entity.Property(e => e.EpisodeId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("episodeid");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+            entity.Property(e => e.PartnerOrganizationMemberId).HasColumnName("partnerorganizationmemberid");
+            entity.Property(e => e.PrevDbId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("prevdbid");
+
+            entity.HasOne(d => d.PartnerOrganizationMember).WithMany(p => p.EpisodeLegalRepresentatives)
+                .HasForeignKey(d => d.PartnerOrganizationMemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_episodelegalrepresentatives_pomid");
+        });
+
+        modelBuilder.Entity<PartnerMember>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("partnermembers");
+
+            entity.HasIndex(e => e.MemberId, "fk_partmem_mem_idx");
+
+            entity.HasIndex(e => e.ModifiedBy, "fk_partmem_modmem_idx");
+
+            entity.HasIndex(e => e.PrefixId, "fk_partmem_prefix_idx");
+
+            entity.HasIndex(e => e.RoleId, "fk_partmem_role_idx");
+
+            entity.HasIndex(e => e.SuffixId, "fk_partmem_suffix_idx");
+
+            entity.HasIndex(e => e.LocationId, "fk_partnermembers_location_idx");
+
+            entity.HasIndex(e => e.PracticeId, "fk_partnermembers_practice_idx");
+
+            entity.HasIndex(e => new { e.FirstName, e.LastName }, "fti_partmem_fnln").HasAnnotation("MySql:FullTextIndex", true);
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(64)
+                .HasColumnName("firstname");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.IsArbitrationAttorney).HasColumnName("isarbitrationattorney");
+            entity.Property(e => e.IsDefaultMember).HasColumnName("isdefaultmember");
+            entity.Property(e => e.IsLitigationAttorney).HasColumnName("islitigationattorney");
+            entity.Property(e => e.LastName)
+                .HasMaxLength(64)
+                .HasColumnName("lastname");
+            entity.Property(e => e.LocationId).HasColumnName("locationid");
+            entity.Property(e => e.MemberId)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("memberid");
+            entity.Property(e => e.MiddleName)
+                .HasMaxLength(64)
+                .HasColumnName("middlename");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+            entity.Property(e => e.PracticeId).HasColumnName("practiceid");
+            entity.Property(e => e.PrefixId).HasColumnName("prefixid");
+            entity.Property(e => e.RoleId).HasColumnName("roleid");
+            entity.Property(e => e.SuffixId).HasColumnName("suffixid");
+        });
+
+        modelBuilder.Entity<PartnerOrganization>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("partnerorganizations");
+
+            entity.HasIndex(e => new { e.PartnerOrganizationName, e.OrganizationTypeId, e.IsActive }, "fk_partorg_custom1");
+
+            entity.HasIndex(e => e.ModifiedBy, "fk_partorg_modmem_idx");
+
+            entity.HasIndex(e => e.OrganizationTypeId, "fk_partorg_orgtypes_idx");
+
+            entity.HasIndex(e => e.PracticeId, "fk_partorg_pracid_idx");
+
+            entity.HasIndex(e => e.PartnerOrganizationName, "fti_partnerorganizations").HasAnnotation("MySql:FullTextIndex", true);
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Comments)
+                .HasMaxLength(200)
+                .HasColumnName("comments");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+            entity.Property(e => e.OrganizationTypeId).HasColumnName("organizationtypeid");
+            entity.Property(e => e.PartnerOrganizationName)
+                .HasMaxLength(100)
+                .HasColumnName("partnerorganizationname");
+            entity.Property(e => e.PracticeId).HasColumnName("practiceid");
+        });
+
+        modelBuilder.Entity<PartnerOrganizationMember>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("partnerorganizationmembers");
+
+            entity.HasIndex(e => e.PartnerOrgLocationMappingId, "fk_partorgmem_locmapid_idx");
+
+            entity.HasIndex(e => e.ModifiedBy, "fk_partorgmem_modmem_idx");
+
+            entity.HasIndex(e => e.PartnerMemberId, "fk_partorgmem_partmem_idx");
+
+            entity.HasIndex(e => e.ReferralSourceTypeId, "fk_partorgmem_refsourcetype_idx");
+
+            entity.HasIndex(e => new { e.PartnerMemberId, e.IsActive }, "idx_partorgmem_custom1");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+            entity.Property(e => e.PartnerMemberId).HasColumnName("partnermemberid");
+            entity.Property(e => e.PartnerOrgLocationMappingId).HasColumnName("partnerorglocationmappingid");
+            entity.Property(e => e.ReferralSourceTypeId).HasColumnName("referralsourcetypeid");
+
+            entity.HasOne(d => d.PartnerMember).WithMany(p => p.PartnerOrganizationMembers)
+                .HasForeignKey(d => d.PartnerMemberId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_partorgmem_partmem");
+
+            entity.HasOne(d => d.PartnerOrgLocationMapping).WithMany(p => p.PartnerOrganizationMembers)
+                .HasForeignKey(d => d.PartnerOrgLocationMappingId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_partorgmem_locmapid_idx");
+        });
+
+        modelBuilder.Entity<PartnerOrgLocationMapping>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("partnerorglocationmapping");
+
+            entity.HasIndex(e => e.PartnerOrganizationLocationId, "fk_partorglocmap_locsid_idx");
+
+            entity.HasIndex(e => e.PartnerOrganizationId, "fk_partorglocmap_orgid_idx");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isactive");
+            entity.Property(e => e.ModifiedBy)
+                .HasColumnType("mediumint unsigned")
+                .HasColumnName("modifiedby");
+            entity.Property(e => e.ModifiedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("modifieddate");
+            entity.Property(e => e.PartnerOrganizationId).HasColumnName("partnerorganizationid");
+            entity.Property(e => e.PartnerOrganizationLocationId).HasColumnName("partnerorganizationlocationid");
+
+            entity.HasOne(d => d.PartnerOrganization).WithMany(p => p.PartnerOrgLocationMappings)
+                .HasForeignKey(d => d.PartnerOrganizationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_partorglocmap_orgid");
+        });
 
         modelBuilder.Entity<Episode>(entity =>
         {

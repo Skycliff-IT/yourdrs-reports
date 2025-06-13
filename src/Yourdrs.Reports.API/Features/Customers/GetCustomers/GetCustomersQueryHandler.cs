@@ -6,6 +6,7 @@ public class GetCustomersQueryHandler
 (ApplicationDbContext context)
     : IQueryHandler<GetCustomersQuery, GetCustomersResponse>
 {
+
     public async Task<GetCustomersResponse> Handle(GetCustomersQuery query, CancellationToken cancellationToken)
     {
         var pageIndex = query.Request.PageIndex;
