@@ -64,6 +64,8 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<OfficeAppointmentCountDto>().HasNoKey();
 
+        modelBuilder.Entity<OfficeAppointmentCountDto>().ToView(null);
+
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");

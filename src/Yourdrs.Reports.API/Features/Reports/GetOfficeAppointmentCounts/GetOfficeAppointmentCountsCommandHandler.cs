@@ -13,45 +13,41 @@ public class GetOfficeAppointmentCountsCommandHandler(ApplicationDbContext _cont
         var hStartDate = request.AppointmentStartDate.AddYears(-1);
         var hEndDate = request.AppointmentEndDate.AddYears(-1);
 
-        // Conditional JOIN flags
-        var includeSurgJoin = CsvHelper.ParseCsvToIntList(request.ProcedureIds).Any() || CsvHelper.ParseCsvToIntList(request.ProcedureTypeIds).Any();
+        var includeSurgJoin = !string.IsNullOrWhiteSpace(request.ProcedureIds) || !string.IsNullOrWhiteSpace(request.ProcedureTypeIds);
         var includeClaimJoin = request.BillingTypeId.HasValue || request.PostedStartDate.HasValue || request.PostedEndDate.HasValue;
+        var includePayCheckJoin = request.PostedStartDate.HasValue || request.PostedEndDate.HasValue;
 
-        // Conditional JOINs
         var joinSurg = includeSurgJoin ? "LEFT JOIN surgeryinfootherdetails surg ON surg.appointmentid = app.id" : "";
         var joinClaim = includeClaimJoin ? "LEFT JOIN rcmclaim clm ON clm.appointmentid = app.id AND clm.isactive = 1" : "";
-        var joinPay = includeClaimJoin ? "LEFT JOIN rcmpayments pay ON pay.claimid = clm.id AND pay.isactive = 1" : "";
-        var joinCheck = includeClaimJoin ? "LEFT JOIN rcmpayments pay ON pay.claimid = clm.id AND pay.isactive = 1 LEFT JOIN rcmcheckdetails chk ON chk.id = pay.checkdetailsid AND chk.isactive = 1"
-                 : "";
-        // Dynamic WHERE conditions
-        string BuildInClause(string column, List<int> values, string paramPrefix)
+        var joinPayCheck = includePayCheckJoin ? "LEFT JOIN rcmpayments pay ON pay.claimid = clm.id AND pay.isactive = 1 " +
+                                                 "LEFT JOIN rcmcheckdetails chk ON chk.id = pay.checkdetailsid AND chk.isactive = 1" : "";
+
+        string BuildInClause(string column, List<int> values)
         {
             if (values == null || !values.Any()) return "";
             var inClause = string.Join(",", values);
             return $"AND {column} IN ({inClause})";
         }
 
-        var practiceCondition = BuildInClause("app.practiceid", CsvHelper.ParseCsvToIntList(request.PracticeIds), "_prac");
-        var locationCondition = BuildInClause("app.locationid", CsvHelper.ParseCsvToIntList(request.LocationIds), "_loc");
-        var providerCondition = BuildInClause("app.providerid", CsvHelper.ParseCsvToIntList(request.ProviderIds), "_prov");
-        var appointmentTypeCondition = BuildInClause("app.appointmenttypeid", CsvHelper.ParseCsvToIntList(request.AppointmentTypeIds), "_appt");
-        var statusCondition = BuildInClause("app.statusid", CsvHelper.ParseCsvToIntList(request.StatusIds), "_stat");
-        var procedureCondition = includeSurgJoin ? BuildInClause("surg.procedureid", CsvHelper.ParseCsvToIntList(request.ProcedureIds), "_proc") : "";
-        var procedureTypeCondition = includeSurgJoin ? BuildInClause("surg.proceduretypeid", CsvHelper.ParseCsvToIntList(request.ProcedureTypeIds), "_proctype") : "";
+        var practiceCondition = BuildInClause("app.practiceid", CsvHelper.ParseCsvToIntList(request.PracticeIds));
+        var locationCondition = BuildInClause("app.locationid", CsvHelper.ParseCsvToIntList(request.LocationIds));
+        var providerCondition = BuildInClause("app.providerid", CsvHelper.ParseCsvToIntList(request.ProviderIds));
+        var appointmentTypeCondition = BuildInClause("app.appointmenttypeid", CsvHelper.ParseCsvToIntList(request.AppointmentTypeIds));
+        var statusCondition = BuildInClause("app.statusid", CsvHelper.ParseCsvToIntList(request.StatusIds));
+        var procedureCondition = includeSurgJoin ? BuildInClause("surg.procedureid", CsvHelper.ParseCsvToIntList(request.ProcedureIds)) : "";
+        var procedureTypeCondition = includeSurgJoin ? BuildInClause("surg.proceduretypeid", CsvHelper.ParseCsvToIntList(request.ProcedureTypeIds)) : "";
 
-        var billingTypeCondition = includeClaimJoin && request.BillingTypeId.HasValue ? "AND clm.billingtypeid = @_BillingTypeId" : "";
+        var billingTypeCondition = request.BillingTypeId.HasValue ? "AND clm.billingtypeid = @_BillingTypeId" : "";
+
+        var appointmentDateCondition = $@"AND (
+            DATE(app.startdatetime) BETWEEN @_Appointmentstartdate AND @_Appointmentenddate
+            AND DATE(app.startdatetime) BETWEEN @_HAppointmentstartdate AND @_HAppointmentenddate)";
 
         var postedDateCondition = includeClaimJoin && (request.PostedStartDate.HasValue || request.PostedEndDate.HasValue)
-            ? @"AND ((@_PostedStartDate IS NULL AND @_PostedEndDate IS NULL)
-                    OR (@_PostedStartDate IS NOT NULL AND @_PostedEndDate IS NULL AND DATE(chk.posteddate) >= @_PostedStartDate)
-                    OR (@_PostedStartDate IS NULL AND @_PostedEndDate IS NOT NULL AND DATE(chk.posteddate) <= @_PostedEndDate)
-                    OR (DATE(chk.posteddate) BETWEEN @_PostedStartDate AND @_PostedEndDate))"
-            : "";
+           ? (request.PostedStartDate.HasValue && request.PostedEndDate.HasValue ? "AND DATE(chk.posteddate) BETWEEN @_PostedStartDate AND @_PostedEndDate"
+             : request.PostedStartDate.HasValue ? "AND DATE(chk.posteddate) >= @_PostedStartDate" : "AND DATE(chk.posteddate) <= @_PostedEndDate" ) : "";
 
-        var arTypeCondition = request.ArTypeId.HasValue
-            ? @"AND ((@_ARTypeId = 1 AND app.appointmenttypeid = 7)
-                     OR (@_ARTypeId = 2 AND app.appointmenttypeid != 7))"
-            : "";
+        var arTypeCondition = request.ArTypeId.HasValue ? @"AND ((@_ARTypeId = 1 AND app.appointmenttypeid = 7) OR (@_ARTypeId = 2 AND app.appointmenttypeid != 7))" : "";
 
         var surgeryDateOpCondition = request.SurgeryDateOp.HasValue
             ? @"AND ((@_SurgeryDateOp = 1 AND DATE(app.startdatetime) BETWEEN @_HAppointmentstartdate AND @_Appointmentenddate)
@@ -60,7 +56,7 @@ public class GetOfficeAppointmentCountsCommandHandler(ApplicationDbContext _cont
             : "";
 
         var whereClause = $@"
-            WHERE app.statusid NOT IN (5)
+            WHERE 1 = 1 
             {practiceCondition}
             {locationCondition}
             {providerCondition}
@@ -94,33 +90,25 @@ public class GetOfficeAppointmentCountsCommandHandler(ApplicationDbContext _cont
                    END) AS Hcnt
             FROM appointments app
             INNER JOIN apptype aty ON app.appointmenttypeid = aty.appttypid
-            INNER JOIN episodes e ON e.id = app.episodeid AND e.isactive = 1
-            {joinClaim}
-            {joinPay}
-            {joinCheck}
+            INNER JOIN episodes e ON e.id = app.episodeid AND e.isactive = 1 and app.statusid NOT IN (5)
             {joinSurg}
+            {joinClaim}
+            {joinPayCheck}
             {whereClause}
-            GROUP BY aty.grp, aty.grpname;";
+            GROUP BY aty.grp;";
 
         var parameters = new List<MySqlParameter>
         {
-            new("@_PracticeIds", request.PracticeIds ?? ""),
-            new("@_LocationIds", request.LocationIds ?? ""),
-            new("@_ProviderIds", request.ProviderIds ?? ""),
-            new("@_AppointmentTypeIds", request.AppointmentTypeIds ?? ""),
-            new("@_StatusIds", request.StatusIds ?? ""),
-            new("@_ProcedureIds", request.ProcedureIds ?? ""),
-            new("@_ProcedureTypeIds", request.ProcedureTypeIds ?? ""),
             new("@_BillingTypeId", request.BillingTypeId ?? (object)DBNull.Value),
+            new("@_Appointmentstartdate", request.AppointmentStartDate),
+            new("@_Appointmentenddate", request.AppointmentEndDate),
+            new("@_HAppointmentstartdate", hStartDate),
+            new("@_HAppointmentenddate", hEndDate),
             new("@_PostedStartDate", request.PostedStartDate ?? (object)DBNull.Value),
             new("@_PostedEndDate", request.PostedEndDate ?? (object)DBNull.Value),
             new("@_ARTypeId", request.ArTypeId ?? (object)DBNull.Value),
             new("@_SurgeryDateOp", request.SurgeryDateOp ?? (object)DBNull.Value),
             new("@_TimeZoneOffset", request.TimeZoneOffset ?? 0),
-            new("@_Appointmentstartdate", request.AppointmentStartDate),
-            new("@_Appointmentenddate", request.AppointmentEndDate),
-            new("@_HAppointmentstartdate", hStartDate),
-            new("@_HAppointmentenddate", hEndDate)
         };
 
         var result = await _context
