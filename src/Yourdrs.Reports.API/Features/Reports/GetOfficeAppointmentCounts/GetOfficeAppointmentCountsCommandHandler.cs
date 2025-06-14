@@ -39,10 +39,6 @@ public class GetOfficeAppointmentCountsCommandHandler(ApplicationDbContext _cont
 
         var billingTypeCondition = request.BillingTypeId.HasValue ? "AND clm.billingtypeid = @_BillingTypeId" : "";
 
-        var appointmentDateCondition = $@"AND (
-            DATE(app.startdatetime) BETWEEN @_Appointmentstartdate AND @_Appointmentenddate
-            AND DATE(app.startdatetime) BETWEEN @_HAppointmentstartdate AND @_HAppointmentenddate)";
-
         var postedDateCondition = includeClaimJoin && (request.PostedStartDate.HasValue || request.PostedEndDate.HasValue)
            ? (request.PostedStartDate.HasValue && request.PostedEndDate.HasValue ? "AND DATE(chk.posteddate) BETWEEN @_PostedStartDate AND @_PostedEndDate"
              : request.PostedStartDate.HasValue ? "AND DATE(chk.posteddate) >= @_PostedStartDate" : "AND DATE(chk.posteddate) <= @_PostedEndDate" ) : "";
